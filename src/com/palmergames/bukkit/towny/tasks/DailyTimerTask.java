@@ -17,14 +17,15 @@ import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.towny.object.Translation;
+import com.palmergames.bukkit.towny.object.jail.UnJailReason;
 import com.palmergames.bukkit.towny.permissions.TownyPerms;
+import com.palmergames.bukkit.towny.utils.JailUtil;
 import com.palmergames.bukkit.towny.utils.MoneyUtil;
 import com.palmergames.bukkit.util.ChatTools;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class DailyTimerTask extends TownyTimerTask {
 	
@@ -106,25 +107,14 @@ public class DailyTimerTask extends TownyTimerTask {
 		if (!universe.getJailedResidentMap().isEmpty()) {
 			for (Resident resident : universe.getJailedResidentMap()) {
 				if (resident.hasJailDays()) {
-					if (resident.getJailDays() == 1) {
-						resident.setJailDays(0);
-						new BukkitRunnable() {
-
-				            @Override
-				            public void run() {				            	
-				            	Town jailTown = universe.getTown(resident.getJailTown());
-				            	if (jailTown != null) {
-									int index = resident.getJailSpawn();
-									resident.setJailed(index, jailTown);
-								}
-				            }
-				            
-				        }.runTaskLater(this.plugin, 20);
-					} else 
+					if (resident.getJailDays() == 1)
+						Bukkit.getScheduler().runTaskLater(plugin, () -> JailUtil.unJailResident(resident, UnJailReason.SENTENCE_SERVED), 20);
+					else {
 						resident.setJailDays(resident.getJailDays() - 1);
-					
+						resident.save();
+					}
 				}
-				resident.save();
+				
 			}			
 		}
 		

@@ -31,9 +31,11 @@ import com.palmergames.bukkit.towny.object.TownyObject;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.towny.object.Translation;
 import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.towny.object.jail.UnJailReason;
 import com.palmergames.bukkit.towny.regen.PlotBlockData;
 import com.palmergames.bukkit.towny.regen.TownyRegenAPI;
 import com.palmergames.bukkit.towny.tasks.DeleteFileTask;
+import com.palmergames.bukkit.towny.utils.JailUtil;
 import com.palmergames.bukkit.towny.war.common.townruin.TownRuinSettings;
 import com.palmergames.bukkit.towny.war.common.townruin.TownRuinUtil;
 import com.palmergames.bukkit.towny.war.eventwar.WarSpoils;
@@ -767,8 +769,7 @@ public abstract class TownyDatabaseHandler extends TownyDataSource {
 		// Look for residents inside of this town's jail and free them
 		for (Resident jailedRes : TownyUniverse.getInstance().getJailedResidentMap()) {
 			if (jailedRes.hasJailTown(town.getName())) {
-                jailedRes.setJailed(0, town);
-                saveResident(jailedRes);
+                JailUtil.unJailResident(jailedRes, UnJailReason.JAIL_DELETED);
             }
 		}
 

@@ -285,6 +285,7 @@ public class ResidentCommand extends BaseCommand implements CommandExecutor {
 					return;
 				}
 				
+				// TODO: Make this not work if the economyhandler isn't active.
 				if (split[1].equalsIgnoreCase("paybail")) {
 					double cost = TownySettings.getBailAmount();
 					

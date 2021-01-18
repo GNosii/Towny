@@ -22,9 +22,12 @@ import com.palmergames.bukkit.towny.invites.InviteHandler;
 import com.palmergames.bukkit.towny.invites.InviteReceiver;
 import com.palmergames.bukkit.towny.invites.exceptions.TooManyInvitesException;
 import com.palmergames.bukkit.towny.object.economy.Account;
+import com.palmergames.bukkit.towny.object.jail.Jail;
+import com.palmergames.bukkit.towny.object.jail.UnJailReason;
 import com.palmergames.bukkit.towny.object.metadata.CustomDataField;
 import com.palmergames.bukkit.towny.permissions.TownyPerms;
 import com.palmergames.bukkit.towny.tasks.SetDefaultModes;
+import com.palmergames.bukkit.towny.utils.JailUtil;
 import com.palmergames.bukkit.util.BukkitTools;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.util.StringMgmt;
@@ -62,6 +65,7 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 	private transient Confirmation confirmation;
 	private final transient List<Invite> receivedInvites = new ArrayList<>();
 	private transient EconomyAccount account = new EconomyAccount(getName());
+	private Jail jail = null;
 
 	private final List<String> townRanks = new ArrayList<>();
 	private final List<String> nationRanks = new ArrayList<>();
@@ -113,11 +117,15 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 		
 		if (isJailed)
 			TownyUniverse.getInstance().getJailedResidentMap().add(this);
-		else
+		else {
 			TownyUniverse.getInstance().getJailedResidentMap().remove(this);
+			this.removeJailSpawn();
+			this.setJailTown(" ");
+			this.setJailDays(0);
+		}
 	}
-	
-	public void sendToJail(int index, Town town) {
+
+	private void sendToJail(int index, Town town) {
 		this.setJailed(true);
 		this.setJailSpawn(index);
 		this.setJailTown(town.getName());
@@ -125,7 +133,8 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 		TownyMessaging.sendMsg(this, Translation.of("msg_you_have_been_sent_to_jail"));
 		TownyMessaging.sendPrefixedTownMessage(town, Translation.of("msg_player_has_been_sent_to_jail_number", this.getName(), index));
 	}
-	
+
+	@Deprecated
 	public void freeFromJail(int index, boolean escaped) {
 		if (!escaped) {
 			TownyMessaging.sendMsg(this, Translation.of("msg_you_have_been_freed_from_jail"));
@@ -158,7 +167,7 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 					// Use teleport warmup					
 					TownyAPI.getInstance().jailTeleport(getPlayer(), loc);
 				}
-				freeFromJail(index, false);
+				JailUtil.unJailResident(this, UnJailReason.PARDONED);
 			} catch (TownyException e) {
 				e.printStackTrace();
 			}
@@ -182,7 +191,6 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 				e.printStackTrace();
 			}
 		}
-		this.save();
 	}
 
 	public void setJailed(Integer index, Town town) {
@@ -190,34 +198,18 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 		if (BukkitTools.isOnline(this.getName()))
 			player = getPlayer();
 		
-		if (this.isJailed) {
-			try {
-				if (player != null) {
-					Location loc;
-					if (this.hasTown())
-						loc = this.getTown().getSpawn();
-					else
-						loc = player.getWorld().getSpawnLocation();
-					player.teleport(loc);
-				}
-				freeFromJail(index, false);
-			} catch (TownyException e) {
-				e.printStackTrace();
+		try {
+			if (player != null) {
+				Location loc = town.getJailSpawn(index);
+				player.teleport(loc);
+				sendToJail(index, town);
 			}
-
-		} else {
-			try {
-				if (player != null) {
-					Location loc = town.getJailSpawn(index);
-					player.teleport(loc);
-					sendToJail(index, town);
-				}
-			} catch (TownyException e) {
-				e.printStackTrace();
-			}
+		} catch (TownyException e) {
+			e.printStackTrace();
 		}
 		this.save();
 	}
+
 	public boolean isJailed() {
 
 		return isJailed;
@@ -923,6 +915,15 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 	@Override
 	public void save() {
 		TownyUniverse.getInstance().getDataSource().saveResident(this);
+	}
+
+
+	public Jail getJail() {
+		return jail;
+	}
+
+	public void setJail(Jail jail) {
+		this.jail = jail;
 	}
 }
 
