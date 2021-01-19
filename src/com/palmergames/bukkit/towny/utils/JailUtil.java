@@ -1,6 +1,11 @@
 package com.palmergames.bukkit.towny.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,8 +15,10 @@ import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.event.resident.ResidentUnjailEvent;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
+import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.Translation;
 import com.palmergames.bukkit.towny.object.jail.Jail;
 import com.palmergames.bukkit.towny.object.jail.JailReason;
@@ -127,5 +134,14 @@ public class JailUtil {
 		 * Send the book off to the BookFactory to be made.
 		 */
 		player.getInventory().addItem(new ItemStack(BookFactory.makeBook("So you've been jailed :(", "Towny Jailco.", pages)));
+	}
+
+	public static void createJailPlot(TownBlock townBlock, Town town, Location location) throws TownyException {
+		UUID uuid = UUID.randomUUID();
+		List<Location> jailSpawns = new ArrayList<Location>(1);
+		jailSpawns.add(location);
+		Jail jail = new Jail(uuid, town, townBlock, jailSpawns);
+		TownyUniverse.getInstance().registerJail(jail);
+		jail.save();
 	}
 }

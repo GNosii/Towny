@@ -1,6 +1,5 @@
 package com.palmergames.bukkit.towny.object;
 
-import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.TownyUniverse;
@@ -13,10 +12,9 @@ import com.palmergames.bukkit.towny.object.metadata.CustomDataField;
 import com.palmergames.bukkit.towny.permissions.PermissionNodes;
 import com.palmergames.bukkit.towny.tasks.CooldownTimerTask;
 import com.palmergames.bukkit.towny.tasks.CooldownTimerTask.CooldownType;
+import com.palmergames.bukkit.towny.utils.JailUtil;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import java.util.Objects;
 
 public class TownBlock extends TownyObject {
@@ -252,8 +250,6 @@ public class TownBlock extends TownyObject {
 		if (this.isJail())
 			this.getTown().removeJailSpawn(this.getCoord());
 
-		System.out.println("getType " + getType());
-		System.out.println("setType " + type);
 		if ((getType().equals(TownBlockType.ARENA) || type.equals(TownBlockType.ARENA))
 			&& TownySettings.getPVPCoolDownTime() > 0 
 			&& !TownyUniverse.getInstance().getPermissionSource().testPermission(resident.getPlayer(), PermissionNodes.TOWNY_ADMIN.getNode())) {
@@ -267,13 +263,8 @@ public class TownBlock extends TownyObject {
 		} else
 			setType(type);
 
-		if (this.isJail()) {
-			Player p = TownyAPI.getInstance().getPlayer(resident);
-			if (p == null)
-				throw new TownyException(Translation.of("msg_err_not_part_town"));
-				
-			this.getTown().addJailSpawn(p.getLocation());
-		}
+		if (this.isJail() && resident.getPlayer().isOnline())
+			JailUtil.createJailPlot(this, getTown(), resident.getPlayer().getLocation());
 
 		this.save();
 	}

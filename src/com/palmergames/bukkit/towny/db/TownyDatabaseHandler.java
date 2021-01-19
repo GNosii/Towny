@@ -31,6 +31,7 @@ import com.palmergames.bukkit.towny.object.TownyObject;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.towny.object.Translation;
 import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.towny.object.jail.Jail;
 import com.palmergames.bukkit.towny.object.jail.UnJailReason;
 import com.palmergames.bukkit.towny.regen.PlotBlockData;
 import com.palmergames.bukkit.towny.regen.TownyRegenAPI;
@@ -611,6 +612,13 @@ public abstract class TownyDatabaseHandler extends TownyDataSource {
 
 	public List<PlotGroup> getAllPlotGroups() {
 		return new ArrayList<>(universe.getGroups());
+	}
+	
+	/*
+	 * get Jails method.
+	 */
+	public List<Jail> getAllJails() {
+		return new ArrayList<>(universe.getJailUUIDMap().values());
 	}
 
 	/*

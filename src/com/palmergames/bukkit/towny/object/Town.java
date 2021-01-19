@@ -1016,18 +1016,12 @@ public class Town extends Government implements TownBlockOwner {
 			
 		removeJailSpawn(Coord.parseCoord(spawn));
 		
-		try {
-			TownBlock jail = TownyAPI.getInstance().getTownBlock(spawn);
-			if (!jail.isJail())
-				throw new TownyException(Translation.of("msg_err_location_is_not_within_a_jail_plot"));
-				
-			jailSpawns.add(spawn);
-			this.save();
-
-		} catch (NotRegisteredException e) {
-			throw new TownyException(Translation.of("msg_err_location_is_not_within_a_town"));
-		}
-
+		TownBlock jail = TownyAPI.getInstance().getTownBlock(spawn);
+		if (!jail.isJail())
+			throw new TownyException(Translation.of("msg_err_location_is_not_within_a_jail_plot"));
+			
+		jailSpawns.add(spawn);
+		this.save();
 	}
 	
 	public void removeJailSpawn(Coord coord) {

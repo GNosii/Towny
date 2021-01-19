@@ -20,6 +20,7 @@ import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.towny.object.jail.Jail;
 import com.palmergames.bukkit.towny.object.metadata.CustomDataField;
 import com.palmergames.bukkit.towny.tasks.GatherResidentUUIDTask;
 import com.palmergames.bukkit.towny.utils.MapUtil;
@@ -2238,5 +2239,23 @@ public final class TownySQLSource extends TownyDatabaseHandler {
 
 	public HikariDataSource getHikariDataSource() {
 		return hikariDataSource;
+	}
+
+	@Override
+	public boolean loadJail(Jail jail) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean saveJail(Jail jail) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void deleteJail(Jail jail) {
+		// TODO Auto-generated method stub
+		
 	}
 }

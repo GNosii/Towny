@@ -7,6 +7,7 @@ import org.bukkit.Location;
 
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
+import com.palmergames.bukkit.towny.TownyUniverse;
 
 public class Jail {
 
@@ -61,5 +62,9 @@ public class Jail {
 		if (index > jailSpawns.size())
 			return;
 		jailSpawns.remove(--index);
+	}
+	
+	public void save() {
+		TownyUniverse.getInstance().getDataSource().saveJail(this);
 	}
 }

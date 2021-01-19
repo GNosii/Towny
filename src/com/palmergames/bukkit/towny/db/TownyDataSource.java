@@ -12,6 +12,7 @@ import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownyWorld;
+import com.palmergames.bukkit.towny.object.jail.Jail;
 import com.palmergames.bukkit.towny.regen.PlotBlockData;
 import com.palmergames.bukkit.towny.tasks.GatherResidentUUIDTask;
 
@@ -98,6 +99,8 @@ public abstract class TownyDataSource {
 	abstract public boolean loadNation(Nation nation);
 
 	abstract public boolean loadWorld(TownyWorld world);
+	
+	abstract public boolean loadJail(Jail jail);
 
 	abstract public boolean loadPlotGroupList();
 
@@ -116,6 +119,8 @@ public abstract class TownyDataSource {
 	abstract public boolean saveTown(Town town);
 	
 	abstract public boolean savePlotGroup(PlotGroup group);
+	
+	abstract public boolean saveJail(Jail jail);
 
 	abstract public boolean saveNation(Nation nation);
 
@@ -144,6 +149,8 @@ public abstract class TownyDataSource {
 	abstract public void deleteFile(String file);
 	
 	abstract public void deletePlotGroup(PlotGroup group);
+	
+	abstract public void deleteJail(Jail jail);
 
 	public boolean cleanup() {
 
@@ -205,6 +212,16 @@ public abstract class TownyDataSource {
 			}
 		return true;
 	}
+	
+	public boolean loadJails() {
+		TownyMessaging.sendDebugMsg("Loading Jails");
+		for (Jail jail : getAllJails())
+			if (!loadJail(jail)) {
+				System.out.println("[Towny] Loading Error: Could not read jail data '" + jail.getUUID() + "'.");
+				return false;
+			}
+		return true;
+	}
 
 	/*
 	 * Save all of category
@@ -225,6 +242,13 @@ public abstract class TownyDataSource {
 		return true;
 	}
 
+	public boolean saveJails() {
+		TownyMessaging.sendDebugMsg("Saving Jails");
+		for (Jail jail : getAllJails())
+			saveJail(jail);
+		return true;
+	}
+	
 	public boolean saveTowns() {
 
 		TownyMessaging.sendDebugMsg("Saving Towns");
@@ -264,6 +288,8 @@ public abstract class TownyDataSource {
 	abstract public List<Resident> getResidents();
 	
 	abstract public List<PlotGroup> getAllPlotGroups();
+	
+	abstract public List<Jail> getAllJails();
 
 	abstract public List<Resident> getResidents(String[] names);
 
