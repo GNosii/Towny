@@ -21,7 +21,9 @@ import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownBlockType;
 import com.palmergames.bukkit.towny.object.Translation;
 import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.towny.object.jail.UnJailReason;
 import com.palmergames.bukkit.towny.utils.CombatUtil;
+import com.palmergames.bukkit.towny.utils.JailUtil;
 import com.palmergames.bukkit.util.BukkitTools;
 import com.palmergames.bukkit.util.ChatTools;
 import com.palmergames.bukkit.util.Colors;
@@ -670,13 +672,11 @@ public class War {
 				int count = 0;
 				for (Resident resident : townyUniverse.getJailedResidentMap()){
 					try {						
-						if (resident.isJailed())
-							if (resident.getJailTown().equals(defenderTown.toString())) 
-								if (Coord.parseCoord(defenderTown.getJailSpawn(resident.getJailSpawn())).toString().equals(townBlock.getCoord().toString())){
-									resident.setJailed(false);
-									resident.save();
-									count++;
-								}
+						if (resident.isJailed() && resident.getJailTown().equals(defenderTown.toString())) 
+							if (WorldCoord.parseCoord(defenderTown.getJailSpawn(resident.getJailSpawn())).equals(townBlock.getWorldCoord())){
+								JailUtil.unJailResident(resident, UnJailReason.JAILBREAK);
+								count++;
+							}
 					} catch (TownyException e) {
 					}
 				}

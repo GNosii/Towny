@@ -7,6 +7,7 @@ public enum UnJailReason {
 	ESCAPE("Escaped"),
 	BAIL("Paid Bail"),
 	SENTENCE_SERVED("Sentence Served"),
+	JAILBREAK("JailBreak"),
 	JAIL_DELETED("");
 	
 	private final String cause;

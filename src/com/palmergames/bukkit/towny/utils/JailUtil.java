@@ -76,6 +76,8 @@ public class JailUtil {
 			break;
 		case JAIL_DELETED:
 			break;
+		case JAILBREAK:
+			break;
 		}
 
 		resident.setJailed(false);
