@@ -1594,7 +1594,7 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 								loc.setPitch(Float.parseFloat(tokens[4]));
 								loc.setYaw(Float.parseFloat(tokens[5]));
 							}
-							jail.addJailSpawn(loc);
+							jail.addJailCell(loc);
 						} catch (NumberFormatException | NullPointerException | NotRegisteredException e) {
 							TownyMessaging.sendErrorMsg("Jail " + jail.getUUID() + " tried to load invalid spawn " + line + " skipping.");
 							continue;
@@ -2120,7 +2120,7 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 		
 		List<String> list = new ArrayList<>();
 		
-		list.add("townblock=" + jail.getTownBlock().getWorldCoord());
+		list.add("townblock=" + jail.getTownBlock().getWorldCoord().toString());
 		StringBuilder jailArray = new StringBuilder("spawns=");
 		for (Location spawn : new ArrayList<>(jail.getJailSpawns())) {
 			jailArray.append(spawn.getWorld().getName()).append(",")

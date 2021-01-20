@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyEconomyHandler;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
@@ -24,10 +26,9 @@ import com.palmergames.bukkit.towny.object.jail.Jail;
 import com.palmergames.bukkit.towny.object.jail.JailReason;
 import com.palmergames.bukkit.towny.object.jail.UnJailReason;
 import com.palmergames.bukkit.util.BookFactory;
+import com.palmergames.bukkit.util.Colors;
 
 public class JailUtil {
-
-	
 	
 	/**
 	 * Jails a resident.
@@ -35,12 +36,15 @@ public class JailUtil {
 	 * @param resident Resident being jailed.
 	 * @param town Town resident is being jailed by.
 	 * @param jail Jail resident is being jailed into.
+	 * @param cell JailCell to spawn to.
 	 * @param hours Hours resident is jailed for.
 	 * @param reason JailReason resident is jailed for.
-	 * @param jailer Resident who did the jailing or null. (For Ticket #4096.)
+	 * @param jailer CommandSender who did the jailing or null. (For Ticket #4096.)
 	 */
-	public static void jailResident(Resident resident, Town town, Jail jail, int hours, JailReason reason, Resident jailer) {
-		sendJailedBookToResident(resident.getPlayer(), reason);		
+	public static void jailResident(Resident resident, Jail jail, int cell, int hours, JailReason reason, CommandSender jailer) {
+		sendJailedBookToResident(resident.getPlayer(), reason);
+		resident.setJail(jail);
+		resident.setJailed(true);
 	}
 
 	/**
@@ -52,7 +56,7 @@ public class JailUtil {
 	public static void unJailResident(Resident resident, UnJailReason reason) {
 		
 		Jail jail = resident.getJail();
-		String jailNumber = "Placeholder";
+		String jailNumber = "Placeholder"; // TODO: replace placeholder/figure out how jails will be named/cells will be named.
 		switch (reason) {
 		case ESCAPE:
 			Town town = null;
@@ -62,26 +66,32 @@ public class JailUtil {
 			
 			// First show a message to the resident, either by broadcasting to the resident's town or just the resident (if they have no town.)
 			if (town != null)
-				TownyMessaging.sendPrefixedTownMessage(town, Translation.of("msg_player_escaped_jail_into_wilderness", resident.getName(), jail.getTownBlock().getWorld().getUnclaimedZoneName()));
+				TownyMessaging.sendPrefixedTownMessage(town, Translation.of("msg_player_escaped_jail_into_wilderness", resident.getName(), jail.getWildName()));
 			else 
 				TownyMessaging.sendMsg(resident, Translation.of("msg_you_have_been_freed_from_jail"));
 			
 			// Second, show a message to the town which has just had a prisoner escape.
 			if (!resident.hasTown() || (town != null && !town.equals(jail.getTown())))
-				TownyMessaging.sendPrefixedTownMessage(jail.getTown(), Translation.of("msg_player_escaped_jail_into_wilderness", resident.getName(), jail.getTownBlock().getWorld().getUnclaimedZoneName()));
+				TownyMessaging.sendPrefixedTownMessage(jail.getTown(), Translation.of("msg_player_escaped_jail_into_wilderness", resident.getName(), jail.getWildName()));
 			break;
 
 		case BAIL:
+			if (resident.getPlayer().isOnline())
+				teleportAwayFromJail(resident);
+			
+			TownyMessaging.sendGlobalMessage(Colors.Red + resident.getName() + Translation.of("msg_has_paid_bail")); // TODO: Change this from a global message to a different one.
+
 			break;
 		case PARDONED:
+		case SENTENCE_SERVED:
+		case LEFT_TOWN:
+		case JAIL_DELETED:
+			if (resident.getPlayer().isOnline())
+				teleportAwayFromJail(resident);
+
+			// Send a message to the resident and town.
 			TownyMessaging.sendMsg(resident, Translation.of("msg_you_have_been_freed_from_jail"));
 			TownyMessaging.sendPrefixedTownMessage(jail.getTown(), Translation.of("msg_player_has_been_freed_from_jail_number", resident.getName(), jailNumber));
-			break;
-		case SENTENCE_SERVED:
-			break;
-		case LEFT_TOWN:
-			break;
-		case JAIL_DELETED:
 			break;
 		case JAILBREAK:
 			break;
@@ -143,5 +153,20 @@ public class JailUtil {
 		Jail jail = new Jail(uuid, town, townBlock, jailSpawns);
 		TownyUniverse.getInstance().registerJail(jail);
 		jail.save();
+		town.addJail(jail);
+		townBlock.setJail(jail);
+	}
+	
+	private static void teleportAwayFromJail(Resident resident) {
+		// Send a pardoned player to the world spawn, or their town's spawn if they have a town with a spawn.
+		Location loc = Bukkit.getWorld(resident.getPlayer().getWorld().getName()).getSpawnLocation();
+		try {
+			loc = resident.getTown().getSpawn();
+		} catch (TownyException e) {}
+
+		// Use teleport warmup
+		TownyMessaging.sendMsg(resident, Translation.of("msg_town_spawn_warmup", TownySettings.getTeleportWarmupTime()));
+		TownyAPI.getInstance().jailTeleport(resident.getPlayer(), loc);
+
 	}
 }

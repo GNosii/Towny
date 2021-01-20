@@ -215,11 +215,13 @@ public abstract class TownyDataSource {
 	
 	public boolean loadJails() {
 		TownyMessaging.sendDebugMsg("Loading Jails");
-		for (Jail jail : getAllJails())
+		for (Jail jail : getAllJails()) {
 			if (!loadJail(jail)) {
 				System.out.println("[Towny] Loading Error: Could not read jail data '" + jail.getUUID() + "'.");
 				return false;
 			}
+			jail.getTown().addJail(jail);
+		}
 		return true;
 	}
 
@@ -372,6 +374,8 @@ public abstract class TownyDataSource {
 
 	abstract public void removeWorld(TownyWorld world) throws UnsupportedOperationException;
 
+	abstract public void removeJail(Jail jail);
+	
 	/**
 	 * @return Returns a {@link Set} of the Residents Map
 	 * 

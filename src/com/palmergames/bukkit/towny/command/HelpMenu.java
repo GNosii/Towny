@@ -152,6 +152,24 @@ public enum HelpMenu {
 				.add("list", "");
 		}
 	},
+	
+	TOWN_JAIL {
+		@Override
+		protected MenuBuilder load() {
+			return new MenuBuilder("town jail")
+				.add("[resident] [hours]", "")
+				.add("[resident] [hours] [jail]", "")
+				.add("[resident] [hours] [jail] [cell]", "");
+		}
+	},
+	
+	TOWN_UNJAIL {
+		@Override
+		protected MenuBuilder load() {
+			return new MenuBuilder("town unjail")
+				.add("[resident]");
+		}
+	},
 
 	TOWN_INVITE {
 		@Override
@@ -328,8 +346,7 @@ public enum HelpMenu {
 				.add("", "/town toggle", "fire", "")
 				.add("", "/town toggle", "mobs", "")
 				.add("", "/town toggle", "taxpercent", "")
-				.add("", "/town toggle", "open", "")
-				.add("", "/town toggle", "jail [number] [resident]", "");
+				.add("", "/town toggle", "open", "");
 		}
 	},
 	

@@ -14,12 +14,14 @@ import com.palmergames.bukkit.towny.exceptions.EmptyNationException;
 import com.palmergames.bukkit.towny.exceptions.EmptyTownException;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
+import com.palmergames.bukkit.towny.object.jail.Jail;
 import com.palmergames.bukkit.towny.object.metadata.CustomDataField;
 import com.palmergames.bukkit.towny.permissions.TownyPerms;
 import com.palmergames.bukkit.util.BukkitTools;
 import com.palmergames.util.StringMgmt;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +43,7 @@ public class Town extends Government implements TownBlockOwner {
 	private List<Location> outpostSpawns = new ArrayList<>();
 	private final List<Location> jailSpawns = new ArrayList<>();
 	private HashMap<String, PlotGroup> plotGroups = null;
+	private List<Jail> jails = null;
 	
 	private Resident mayor;
 	private int bonusBlocks = 0;
@@ -1192,6 +1195,40 @@ public class Town extends Government implements TownBlockOwner {
 		return this.conqueredDays;
 	}
 	
+	public void addJail(Jail jail) {
+		if (!hasJails())
+			jails = new ArrayList<>(1);
+		
+		jails.add(jail);
+	}
+	
+	public void removeJail(Jail jail) {
+		if (hasJails() && hasJail(jail))
+			jails.remove(jail);
+	}
+	
+	public boolean hasJails() {
+		return jails != null;
+	}
+	
+	public boolean hasJail(Jail jail) {
+		return jails.contains(jail);
+	}
+
+	@Nullable
+	public Collection<Jail> getJails() {
+		if (!hasJails())
+			return null;
+		return Collections.unmodifiableCollection(jails);
+	}
+	
+	public Jail getJail(int i) {
+		if (!hasJails() || jails.size() < i)
+			return null;
+		
+		return jails.get(--i);
+	}
+	
 	public List<TownBlock> getTownBlocksForPlotGroup(PlotGroup group) {
 		ArrayList<TownBlock> retVal = new ArrayList<>();
 		TownyMessaging.sendErrorMsg(group.toString());
@@ -1214,7 +1251,6 @@ public class Town extends Government implements TownBlockOwner {
 			plotGroups = new HashMap<>();
 		
 		plotGroups.put(group.getName(), group);
-		
 	}
 	
 	public void removePlotGroup(PlotGroup plotGroup) {

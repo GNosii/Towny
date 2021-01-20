@@ -14,12 +14,12 @@ public class Jail {
 	private UUID uuid;
 	private Town town;
 	private TownBlock townBlock;
-	private List<Location> jailSpawns;
-	public Jail(UUID uuid, Town town, TownBlock townBlock, List<Location> jailSpawns) {
+	private List<Location> jailCells;
+	public Jail(UUID uuid, Town town, TownBlock townBlock, List<Location> jailCells) {
 		this.uuid = uuid;
 		this.town = town;
 		this.townBlock = townBlock;
-		this.jailSpawns = jailSpawns;
+		this.jailCells = jailCells;
 	}
 
 	public UUID getUUID() {
@@ -47,21 +47,31 @@ public class Jail {
 	}
 
 	public List<Location> getJailSpawns() {
-		return jailSpawns;
+		return jailCells;
 	}
 
-	public void setJailSpawns(List<Location> jailSpawns) {
-		this.jailSpawns = jailSpawns;
+	public void setJailCells(List<Location> jailCells) {
+		this.jailCells = jailCells;
 	}
 	
-	public void addJailSpawn(Location location) {
-		jailSpawns.add(location);
+	public void addJailCell(Location location) {
+		jailCells.add(location);
 	}
 	
-	public void removeJailSpawn(int index) {
-		if (index > jailSpawns.size())
+	public void removeJailCell(int index) {
+		if (index > jailCells.size())
 			return;
-		jailSpawns.remove(--index);
+		jailCells.remove(--index);
+	}
+	
+	public boolean hasJailCell(int index) {
+		if (jailCells == null || jailCells.size() < index)
+			return false;
+		return true;
+	}
+	
+	public String getWildName() {
+		return getTownBlock().getWorld().getUnclaimedZoneName();
 	}
 	
 	public void save() {

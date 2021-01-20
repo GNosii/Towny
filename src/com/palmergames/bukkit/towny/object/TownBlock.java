@@ -8,6 +8,7 @@ import com.palmergames.bukkit.towny.event.PlotChangeTypeEvent;
 import com.palmergames.bukkit.towny.exceptions.AlreadyRegisteredException;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
+import com.palmergames.bukkit.towny.object.jail.Jail;
 import com.palmergames.bukkit.towny.object.metadata.CustomDataField;
 import com.palmergames.bukkit.towny.permissions.PermissionNodes;
 import com.palmergames.bukkit.towny.tasks.CooldownTimerTask;
@@ -28,7 +29,8 @@ public class TownBlock extends TownyObject {
 	private boolean locked = false;
 	private boolean outpost = false;
 	private PlotGroup plotGroup;
-
+	private Jail jail;
+	
 	//Plot level permissions
 	protected TownyPermission permissions = new TownyPermission();
 	protected boolean isChanged = false;
@@ -246,9 +248,12 @@ public class TownBlock extends TownyObject {
 	}
 	
 	public void setType(TownBlockType type, Resident resident) throws TownyException {
-		// Attempt to clear a jail spawn in case this was a jail plot until now.
-		if (this.isJail())
-			this.getTown().removeJailSpawn(this.getCoord());
+
+		// Delete a jail if this is no longer going to be a jail.
+		if (this.isJail() && !type.equals(TownBlockType.JAIL)) {
+			TownyUniverse.getInstance().getDataSource().removeJail(getJail());
+			setJail(null);
+		}
 
 		if ((getType().equals(TownBlockType.ARENA) || type.equals(TownBlockType.ARENA))
 			&& TownySettings.getPVPCoolDownTime() > 0 
@@ -379,6 +384,14 @@ public class TownBlock extends TownyObject {
 		return this.getType() == TownBlockType.JAIL;
 	}
 	
+	public Jail getJail() {
+		return jail;
+	}
+
+	public void setJail(Jail jail) {
+		this.jail = jail;
+	}
+
 	@Override
 	public void addMetaData(CustomDataField<?> md) {
 		super.addMetaData(md);

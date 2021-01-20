@@ -12,7 +12,6 @@ import com.palmergames.bukkit.towny.event.TownAddResidentRankEvent;
 import com.palmergames.bukkit.towny.event.TownRemoveResidentEvent;
 import com.palmergames.bukkit.towny.event.TownRemoveResidentRankEvent;
 import com.palmergames.bukkit.towny.event.resident.ResidentJailEvent;
-import com.palmergames.bukkit.towny.event.resident.ResidentUnjailEvent;
 import com.palmergames.bukkit.towny.exceptions.AlreadyRegisteredException;
 import com.palmergames.bukkit.towny.exceptions.EmptyTownException;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
@@ -52,10 +51,6 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 	private long lastOnline;
 	private long registered;
 	private boolean isNPC = false;
-	private boolean isJailed = false;
-	private int jailSpawn;
-	private int jailDays;
-	private String jailTown = "";
 	private String title = "";
 	private String surname = "";
 	private long teleportRequestTime = -1;
@@ -66,7 +61,11 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 	private final transient List<Invite> receivedInvites = new ArrayList<>();
 	private transient EconomyAccount account = new EconomyAccount(getName());
 	private Jail jail = null;
-
+	private boolean isJailed = false;
+	private int jailSpawn;
+	private int jailDays;
+	private String jailTown = "";
+	
 	private final List<String> townRanks = new ArrayList<>();
 	private final List<String> nationRanks = new ArrayList<>();
 	private List<TownBlock> townBlocks = new ArrayList<>();
@@ -122,6 +121,7 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 			this.removeJailSpawn();
 			this.setJailTown(" ");
 			this.setJailDays(0);
+			this.setJail(null);
 		}
 	}
 
@@ -134,43 +134,10 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 		TownyMessaging.sendPrefixedTownMessage(town, Translation.of("msg_player_has_been_sent_to_jail_number", this.getName(), index));
 	}
 
-	@Deprecated
-	public void freeFromJail(int index, boolean escaped) {
-		if (!escaped) {
-			TownyMessaging.sendMsg(this, Translation.of("msg_you_have_been_freed_from_jail"));
-			TownyMessaging.sendPrefixedTownMessage(town, Translation.of("msg_player_has_been_freed_from_jail_number", this.getName(), index));
-		} else {
-			try {
-				if (this.hasTown())
-					TownyMessaging.sendPrefixedTownMessage(this.getTown(),  Translation.of("msg_player_escaped_jail_into_wilderness", this.getName(), TownyUniverse.getInstance().getDataSource().getWorld(getPlayer().getLocation().getWorld().getName()).getUnclaimedZoneName()));
-				else 
-					TownyMessaging.sendMsg(this, Translation.of("msg_you_have_been_freed_from_jail"));
-				
-				Town jailTown = TownyUniverse.getInstance().getTown(this.getJailTown());
-				if (jailTown != null)
-					TownyMessaging.sendPrefixedTownMessage(jailTown, Translation.of("msg_player_escaped_jail_into_wilderness", this.getName(), TownyUniverse.getInstance().getDataSource().getWorld(getPlayer().getLocation().getWorld().getName()).getUnclaimedZoneName()));
-			} catch (NotRegisteredException ignored) {}
-		}
-		this.setJailed(false);
-		this.removeJailSpawn();
-		this.setJailTown(" ");	
-		Bukkit.getPluginManager().callEvent(new ResidentUnjailEvent(this));
-	}
-
 	public void setJailedByMayor(int index, Town town, Integer days) {
 
 		if (this.isJailed) {
-			try {
-				Location loc = this.getTown().getSpawn();
-				TownyMessaging.sendMsg(this, Translation.of("msg_town_spawn_warmup", TownySettings.getTeleportWarmupTime()));
-				if (BukkitTools.isOnline(this.getName())) {
-					// Use teleport warmup					
-					TownyAPI.getInstance().jailTeleport(getPlayer(), loc);
-				}
-				JailUtil.unJailResident(this, UnJailReason.PARDONED);
-			} catch (TownyException e) {
-				e.printStackTrace();
-			}
+			JailUtil.unJailResident(this, UnJailReason.PARDONED);
 
 		} else {
 			try {
@@ -215,6 +182,14 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 		return isJailed;
 	}
 
+	public Jail getJail() {
+		return jail;
+	}
+
+	public void setJail(Jail jail) {
+		this.jail = jail;
+	}
+	
 	public boolean hasJailSpawn() {
 		return this.jailSpawn > 0;
 	}
@@ -917,13 +892,5 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 		TownyUniverse.getInstance().getDataSource().saveResident(this);
 	}
 
-
-	public Jail getJail() {
-		return jail;
-	}
-
-	public void setJail(Jail jail) {
-		this.jail = jail;
-	}
 }
 

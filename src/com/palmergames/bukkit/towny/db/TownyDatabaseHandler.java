@@ -703,6 +703,9 @@ public abstract class TownyDatabaseHandler extends TownyDataSource {
 			logger.warn(event.getCancelMessage());
 			return;
 		}
+		
+		if (townBlock.isJail())
+			removeJail(townBlock.getJail());
 
 		TownyUniverse.getInstance().removeTownBlock(townBlock);
 		deleteTownBlock(townBlock);
@@ -888,6 +891,16 @@ public abstract class TownyDatabaseHandler extends TownyDataSource {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public void removeJail(Jail jail) {
+		for (Resident resident : universe.getJailedResidentMap()) 
+			if (resident.getJail().equals(jail))
+				JailUtil.unJailResident(resident, UnJailReason.JAIL_DELETED);
+
+		TownyUniverse.getInstance().unregisterJail(jail);
+		deleteJail(jail);
+	}
+	
 	/*
 	 * Rename Object Methods
 	 */
