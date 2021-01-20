@@ -43,6 +43,13 @@ public class JailUtil {
 	 */
 	public static void jailResident(Resident resident, Jail jail, int cell, int hours, JailReason reason, CommandSender jailer) {
 		sendJailedBookToResident(resident.getPlayer(), reason);
+		
+		switch(reason) {
+		case MAYOR:
+		case OUTLAW_DEATH:
+		case PRISONER_OF_WAR:
+		}
+		
 		resident.setJail(jail);
 		resident.setJailed(true);
 	}
