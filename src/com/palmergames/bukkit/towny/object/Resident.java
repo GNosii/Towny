@@ -32,6 +32,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -772,17 +774,13 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 	}
 
 	@Override
-	public void addMetaData(CustomDataField<?> md) {
-		super.addMetaData(md);
-
-		this.save();
+	public void addMetaData(@NotNull CustomDataField<?> md) {
+		this.addMetaData(md, true);
 	}
 
 	@Override
-	public void removeMetaData(CustomDataField<?> md) {
-		super.removeMetaData(md);
-
-		this.save();
+	public void removeMetaData(@NotNull CustomDataField<?> md) {
+		this.removeMetaData(md, true);
 	}
 
 	@Override
