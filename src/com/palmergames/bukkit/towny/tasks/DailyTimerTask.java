@@ -17,9 +17,7 @@ import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.towny.object.Translation;
-import com.palmergames.bukkit.towny.object.jail.UnJailReason;
 import com.palmergames.bukkit.towny.permissions.TownyPerms;
-import com.palmergames.bukkit.towny.utils.JailUtil;
 import com.palmergames.bukkit.towny.utils.MoneyUtil;
 import com.palmergames.bukkit.util.ChatTools;
 import java.util.ArrayList;
@@ -99,23 +97,6 @@ public class DailyTimerTask extends TownyTimerTask {
 			}
 			if (!deletedTowns.isEmpty())
 				TownyMessaging.sendGlobalMessage(Translation.of("msg_the_following_towns_were_deleted_for_having_0_claims", String.join(", ", deletedTowns)));
-		}
-		
-		/*
-		 * Reduce the number of days jailed residents are jailed for.
-		 */
-		if (!universe.getJailedResidentMap().isEmpty()) {
-			for (Resident resident : universe.getJailedResidentMap()) {
-				if (resident.hasJailDays()) {
-					if (resident.getJailDays() == 1)
-						Bukkit.getScheduler().runTaskLater(plugin, () -> JailUtil.unJailResident(resident, UnJailReason.SENTENCE_SERVED), 20);
-					else {
-						resident.setJailDays(resident.getJailDays() - 1);
-						resident.save();
-					}
-				}
-				
-			}			
 		}
 		
 		/*

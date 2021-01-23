@@ -660,29 +660,26 @@ public class War {
 		} catch (EconomyException ignored) {}
 		
 		// Check to see if this is a special TownBlock
-		if (defenderHomeblock && defenderTown.isCapital()){
+		if (defenderHomeblock && defenderTown.isCapital()) {
 			remove(attacker, defenderTown.getNation());
-		} else if (defenderHomeblock){
+		} else if (defenderHomeblock) {
 			remove(attacker, defenderTown);
-		} else{
+		} else {
 			townScored(attacker, TownySettings.getWarPointsForTownBlock(), townBlock, 0);
 			remove(townBlock.getWorldCoord());
 			// Free players who are jailed in the jail plot.
-			if (townBlock.getType().equals(TownBlockType.JAIL)){
+			if (townBlock.getType().equals(TownBlockType.JAIL)) {
 				int count = 0;
-				for (Resident resident : townyUniverse.getJailedResidentMap()){
-					try {						
-						if (resident.isJailed() && resident.getJailTown().equals(defenderTown.toString())) 
-							if (WorldCoord.parseCoord(defenderTown.getJailSpawn(resident.getJailSpawn())).equals(townBlock.getWorldCoord())){
-								JailUtil.unJailResident(resident, UnJailReason.JAILBREAK);
-								count++;
-							}
-					} catch (TownyException e) {
-					}
+				for (Resident resident : townyUniverse.getJailedResidentMap()) {
+					if (resident.isJailed() && resident.getJail().getTown().equals(defenderTown))
+						if (resident.getJail().getTownBlock().getWorldCoord().equals(townBlock.getWorldCoord())) {
+							JailUtil.unJailResident(resident, UnJailReason.JAILBREAK);
+							count++;
+						}
 				}
-				if (count>0)
+				if (count > 0)
 					TownyMessaging.sendGlobalMessage(Translation.of("msg_war_jailbreak", defenderTown, count));
-			}				
+			}
 		}
 		defenderTown.save();
 		attacker.save();

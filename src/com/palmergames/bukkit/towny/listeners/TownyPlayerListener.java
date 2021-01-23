@@ -12,7 +12,6 @@ import com.palmergames.bukkit.towny.event.PlayerEnterTownEvent;
 import com.palmergames.bukkit.towny.event.PlayerLeaveTownEvent;
 import com.palmergames.bukkit.towny.event.executors.TownyActionEventExecutor;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Coord;
 import com.palmergames.bukkit.towny.object.PlayerCache;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -196,20 +195,12 @@ public class TownyPlayerListener implements Listener {
 		if (!TownySettings.isTownRespawning())
 			return;
 	
-		try {
-			Location respawn = null;			
-			Resident resident = townyUniverse.getResident(event.getPlayer().getUniqueId());
-			// If player is jailed send them to their jailspawn.
-			if (resident != null && resident.isJailed()) {
-				Town respawnTown = townyUniverse.getTown(resident.getJailTown());
-				if (respawnTown != null) {
-					respawn = respawnTown.getJailSpawn(resident.getJailSpawn());
-					event.setRespawnLocation(respawn);
-				}
-			}
-		} catch (TownyException e) {
-			// Town has not set respawn location. Using default.
-		}
+		Resident resident = townyUniverse.getResident(event.getPlayer().getUniqueId());
+
+		// If player is jailed send them to their jailspawn.
+		if (resident != null && resident.isJailed())
+			event.setRespawnLocation(resident.getJail().getJailSpawns().get(resident.getJailCell()));
+
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

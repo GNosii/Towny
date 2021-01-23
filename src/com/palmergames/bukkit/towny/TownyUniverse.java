@@ -1143,8 +1143,21 @@ public class TownyUniverse {
     /*
      * Jail Stuff
      */
+
     public Map<UUID, Jail> getJailUUIDMap() {
     	return jailUUIDMap;
+    }
+    
+    @Nullable
+    public Jail getJail(UUID uuid) {
+    	if (hasJail(uuid))
+    		return jailUUIDMap.get(uuid);
+    	
+    	return null;
+    }
+    
+    public boolean hasJail(UUID uuid) {
+    	return jailUUIDMap.containsKey(uuid);
     }
     
     public void registerJail(Jail jail) {
@@ -1165,6 +1178,11 @@ public class TownyUniverse {
     	Jail jail = new Jail(UUID.fromString(uuid), null, null, null);
     	registerJail(jail);
     }
+    
+    
+    /*
+     * Deprecated Stuff
+     */
     
 	/**
 	 * Retrieves the configuration's output database type.

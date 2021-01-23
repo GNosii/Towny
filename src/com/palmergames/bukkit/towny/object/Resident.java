@@ -61,10 +61,8 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 	private final transient List<Invite> receivedInvites = new ArrayList<>();
 	private transient EconomyAccount account = new EconomyAccount(getName());
 	private Jail jail = null;
-	private boolean isJailed = false;
-	private int jailSpawn;
-	private int jailDays;
-	private String jailTown = "";
+	private int jailCell;
+	private int jailHours;
 	
 	private final List<String> townRanks = new ArrayList<>();
 	private final List<String> nationRanks = new ArrayList<>();
@@ -112,31 +110,25 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 	}
 
 	public void setJailed(boolean isJailed) {
-		this.isJailed = isJailed;
 		
 		if (isJailed)
 			TownyUniverse.getInstance().getJailedResidentMap().add(this);
 		else {
 			TownyUniverse.getInstance().getJailedResidentMap().remove(this);
-			this.removeJailSpawn();
-			this.setJailTown(" ");
-			this.setJailDays(0);
 			this.setJail(null);
 		}
 	}
 
 	private void sendToJail(int index, Town town) {
 		this.setJailed(true);
-		this.setJailSpawn(index);
-		this.setJailTown(town.getName());
 		Bukkit.getPluginManager().callEvent(new ResidentJailEvent(this));
 		TownyMessaging.sendMsg(this, Translation.of("msg_you_have_been_sent_to_jail"));
 		TownyMessaging.sendPrefixedTownMessage(town, Translation.of("msg_player_has_been_sent_to_jail_number", this.getName(), index));
 	}
 
-	public void setJailedByMayor(int index, Town town, Integer days) {
+	public void setJailedByMayor(int index, Town town, Integer hours) {
 
-		if (this.isJailed) {
+		if (isJailed()) {
 			JailUtil.unJailResident(this, UnJailReason.PARDONED);
 
 		} else {
@@ -148,11 +140,11 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 				TownyAPI.getInstance().jailTeleport(getPlayer(), loc);
 
 				sendToJail(index, town);
-				if (days > 0) {
-					if (days > 10000)
-						days = 10000;
-					this.setJailDays(days);
-					TownyMessaging.sendMsg(this, Translation.of("msg_you've_been_jailed_for_x_days", days));
+				if (hours > 0) {
+					if (hours > 10000)
+						hours = 10000;
+					this.setJailHours(hours);
+					TownyMessaging.sendMsg(this, Translation.of("msg_you've_been_jailed_for_x_days", hours));
 				}
 			} catch (TownyException e) {
 				e.printStackTrace();
@@ -179,7 +171,7 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 
 	public boolean isJailed() {
 
-		return isJailed;
+		return jail != null;
 	}
 
 	public Jail getJail() {
@@ -190,54 +182,35 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 		this.jail = jail;
 	}
 	
-	public boolean hasJailSpawn() {
-		return this.jailSpawn > 0;
+	public int getJailCell() {
+		return jailCell;
 	}
-
-	public int getJailSpawn() {
-
-		return jailSpawn;
+	
+	public void setJailCell(int i) {
+		if (jail.hasJailCell(i))
+			this.jailCell = i;
 	}
-
-	public void setJailSpawn(int index) {
-
-		this.jailSpawn = index;
-
-	}
-
-	public void removeJailSpawn() {
-
-		this.jailSpawn = 0;
-	}
-
+	
 	public String getJailTown() {
 
-		return jailTown;
-	}
-
-	public void setJailTown(String jailTown) {
-		if (jailTown == null) {
-			this.jailTown = "";
-			return;
-		}
-		this.jailTown = jailTown.trim();
+		return jail.getTown().getName();
 	}
 
 	public boolean hasJailTown(String jailtown) {
 
-		return jailTown.equalsIgnoreCase(jailtown);
+		return getJailTown().equalsIgnoreCase(jailtown);
 	}
 	
-	public int getJailDays() {
-		return jailDays;
+	public int getJailHours() {
+		return jailHours;
 	}
 	
-	public void setJailDays(Integer days) {
-		this.jailDays = days;
+	public void setJailHours(Integer hours) {
+		this.jailHours = hours;
 	}
 	
-	public boolean hasJailDays() {
-		return this.jailDays > 0;
+	public boolean hasJailTime() {
+		return this.jailHours > 0;
 	}
 
 	public void setTitle(String title) {

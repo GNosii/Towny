@@ -993,16 +993,6 @@ public abstract class TownyDatabaseHandler extends TownyDataSource {
 				saveResident(resident);
 			}
 
-			//search and update all resident's jailTown with new name.
-
-            for (Resident toCheck : universe.getResidents()){
-                    if (toCheck.hasJailTown(oldName)) {
-                        toCheck.setJailTown(newName);
-                        
-                        saveResident(toCheck);
-                    }
-            }
-            
 			// Update all townBlocks with the new name
 
 			for (TownBlock townBlock : town.getTownBlocks()) {

@@ -765,26 +765,26 @@ public final class TownySQLSource extends TownyDatabaseHandler {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			try {
-				resident.setJailed(rs.getBoolean("isJailed"));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				resident.setJailSpawn(rs.getInt("JailSpawn"));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				resident.setJailDays(rs.getInt("JailDays"));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				resident.setJailTown(rs.getString("JailTown"));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//			try {
+//				resident.setJailed(rs.getBoolean("isJailed"));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			try {
+//				resident.setJailSpawn(rs.getInt("JailSpawn"));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			try {
+//				resident.setJailDays(rs.getInt("JailDays"));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			try {
+//				resident.setJailTown(rs.getString("JailTown"));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
 
 			String line;
 			try {
@@ -1845,10 +1845,13 @@ public final class TownySQLSource extends TownyDatabaseHandler {
 			res_hm.put("lastOnline", resident.getLastOnline());
 			res_hm.put("registered", resident.getRegistered());
 			res_hm.put("isNPC", resident.isNPC());
-			res_hm.put("isJailed", resident.isJailed());
-			res_hm.put("JailSpawn", resident.getJailSpawn());
-			res_hm.put("JailDays", resident.getJailDays());
-			res_hm.put("JailTown", resident.getJailTown());
+			res_hm.put("jail", resident.getJail().getUUID());
+			res_hm.put("jailCell", resident.getJailCell());
+			res_hm.put("jailHours", resident.getJailHours());
+//			res_hm.put("isJailed", resident.isJailed());
+//			res_hm.put("JailSpawn", resident.getJailSpawn());
+//			res_hm.put("JailDays", resident.getJailDays());
+//			res_hm.put("JailTown", resident.getJailTown());
 			res_hm.put("title", resident.getTitle());
 			res_hm.put("surname", resident.getSurname());
 			res_hm.put("town", resident.hasTown() ? resident.getTown().getName() : "");

@@ -514,7 +514,7 @@ public class TownyEntityMonitorListener implements Listener {
 						if (!townyUniverse.getPermissionSource().testPermission(attackerPlayer, PermissionNodes.TOWNY_OUTLAW_JAILER.getNode()))
 							return;
 						defenderResident.setJailed(1, attackerTown);
-						defenderResident.setJailDays(TownySettings.getJailedOutlawJailDays());
+						defenderResident.setJailHours(TownySettings.getJailedOutlawJailHours());
 						defenderResident.save();
 						return;
 						

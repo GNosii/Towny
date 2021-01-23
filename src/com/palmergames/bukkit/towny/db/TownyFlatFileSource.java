@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringJoiner;
@@ -457,21 +458,27 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 				if (line != null)
 					resident.setNPC(Boolean.parseBoolean(line));
 				
-				line = keys.get("isJailed");
-				if (line != null)
-					resident.setJailed(Boolean.parseBoolean(line));
+//				line = keys.get("isJailed");
+//				if (line != null)
+//					resident.setJailed(Boolean.parseBoolean(line));
+
+				line = keys.get("jail");
+				if (line != null && universe.hasJail(UUID.fromString(line)))
+					resident.setJail(universe.getJail(UUID.fromString(line)));
 				
-				line = keys.get("JailSpawn");
-				if (line != null)
-					resident.setJailSpawn(Integer.valueOf(line));
+				line = keys.get("jailCell");
 				
-				line = keys.get("JailDays");
-				if (line != null)
-					resident.setJailDays(Integer.valueOf(line));
-				
-				line = keys.get("JailTown");
-				if (line != null)
-					resident.setJailTown(line);
+//				line = keys.get("JailSpawn");
+//				if (line != null)
+//					resident.setJailSpawn(Integer.valueOf(line));
+//				
+//				line = keys.get("JailDays");
+//				if (line != null)
+//					resident.setJailDays(Integer.valueOf(line));
+//				
+//				line = keys.get("JailTown");
+//				if (line != null)
+//					resident.setJailTown(line);
 
 				line = keys.get("friends");
 				if (line != null) {
@@ -813,11 +820,11 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 									loc.setPitch(Float.parseFloat(tokens[4]));
 									loc.setYaw(Float.parseFloat(tokens[5]));
 								}
-								UUID uuid = UUID.randomUUID();
+
 								TownBlock tb = TownyUniverse.getInstance().getTownBlock(WorldCoord.parseWorldCoord(loc));
-								List<Location> spawns = new ArrayList<>();
-								spawns.add(loc);
-								Jail jail = new Jail(uuid, town, tb, spawns);
+								if (tb == null)
+									continue;
+								Jail jail = new Jail(UUID.randomUUID(), town, tb, new ArrayList<>(Collections.singleton(loc)));
 								jail.save();
 							} catch (NumberFormatException | NullPointerException | NotRegisteredException ignored) {
 							}
@@ -1666,14 +1673,12 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 		list.add("registered=" + resident.getRegistered());
 		// isNPC
 		list.add("isNPC=" + resident.isNPC());
-		// isJailed
-		list.add("isJailed=" + resident.isJailed());
-		// JailSpawn
-		list.add("JailSpawn=" + resident.getJailSpawn());
-		// JailDays
-		list.add("JailDays=" + resident.getJailDays());
-		// JailTown
-		list.add("JailTown=" + resident.getJailTown());
+		// jail 
+		list.add("jail=" + resident.getJail().getUUID());
+		// jailCell
+		list.add("jailCell=" + resident.getJailCell());
+		// jailHours
+		list.add("jailHours=" + resident.getJailHours());
 
 		// title
 		list.add("title=" + resident.getTitle());
@@ -1796,14 +1801,6 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 				outpostArray.append(spawn.getWorld().getName()).append(",").append(spawn.getX()).append(",").append(spawn.getY()).append(",").append(spawn.getZ()).append(",").append(spawn.getPitch()).append(",").append(spawn.getYaw()).append(";");
 			}
 		list.add(outpostArray.toString());
-
-		// Jail Spawns
-		StringBuilder jailArray = new StringBuilder("jailspawns=");
-		if (town.hasJailSpawn())
-			for (Location spawn : new ArrayList<>(town.getAllJailSpawns())) {
-				jailArray.append(spawn.getWorld().getName()).append(",").append(spawn.getX()).append(",").append(spawn.getY()).append(",").append(spawn.getZ()).append(",").append(spawn.getPitch()).append(",").append(spawn.getYaw()).append(";");
-			}
-		list.add(jailArray.toString());
 
 		// Outlaws
 		list.add("outlaws=" + StringMgmt.join(town.getOutlaws(), ","));

@@ -2625,8 +2625,6 @@ public class TownCommand extends BaseCommand implements CommandExecutor, TabComp
 			Confirmation.runOnAccept(() -> {
 				if (resident.isJailed() && resident.getJailTown().equals(town.getName())) {
 					resident.setJailed(false);
-					resident.setJailSpawn(0);
-					resident.setJailTown("");
 					TownyMessaging.sendPrefixedTownMessage(town, Translation.of("msg_player_escaped_jail_by_leaving_town", resident.getName()));
 				}
 
