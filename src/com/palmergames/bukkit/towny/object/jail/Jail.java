@@ -46,7 +46,7 @@ public class Jail {
 		this.townBlock = townBlock;
 	}
 
-	public List<Location> getJailSpawns() {
+	public List<Location> getJailCellLocations() {
 		return jailCells;
 	}
 

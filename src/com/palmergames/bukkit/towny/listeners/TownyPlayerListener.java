@@ -199,7 +199,7 @@ public class TownyPlayerListener implements Listener {
 
 		// If player is jailed send them to their jailspawn.
 		if (resident != null && resident.isJailed())
-			event.setRespawnLocation(resident.getJail().getJailSpawns().get(resident.getJailCell()));
+			event.setRespawnLocation(resident.getJail().getJailCellLocations().get(resident.getJailCell()));
 
 	}
 	

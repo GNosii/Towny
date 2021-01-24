@@ -2266,16 +2266,17 @@ public class TownCommand extends BaseCommand implements CommandExecutor, TabComp
 						return;
 					}
 
-				} else if (split[0].equalsIgnoreCase("jail")) {
-
-					try {
-						town.addJailSpawn(player.getLocation());
-						TownyMessaging.sendMsg(player, Translation.of("msg_set_jail_spawn"));
-					} catch (TownyException e) {
-						TownyMessaging.sendErrorMsg(player, e.getMessage());
-						return;
-					}
-
+// TODO: A method of setting, re-setting and removing jail spawns.
+//				} else if (split[0].equalsIgnoreCase("jail")) {
+//
+//					try {
+//						town.addJailSpawn(player.getLocation());
+//						TownyMessaging.sendMsg(player, Translation.of("msg_set_jail_spawn"));
+//					} catch (TownyException e) {
+//						TownyMessaging.sendErrorMsg(player, e.getMessage());
+//						return;
+//					}
+//
 				} else if (split[0].equalsIgnoreCase("perm")) {
 
 					// Make sure we are allowed to set these permissions.

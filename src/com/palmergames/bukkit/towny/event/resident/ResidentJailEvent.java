@@ -54,6 +54,6 @@ public class ResidentJailEvent extends Event {
 	}
 
 	public Location getJailSpawnLocation() {
-		return getJail().getJailSpawns().get(getJailCell());
+		return getJail().getJailCellLocations().get(getJailCell());
 	}
 }

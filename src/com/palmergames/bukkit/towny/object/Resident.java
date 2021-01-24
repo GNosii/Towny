@@ -1,7 +1,6 @@
 package com.palmergames.bukkit.towny.object;
 
 import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.TownyUniverse;
@@ -11,7 +10,6 @@ import com.palmergames.bukkit.towny.event.TownAddResidentEvent;
 import com.palmergames.bukkit.towny.event.TownAddResidentRankEvent;
 import com.palmergames.bukkit.towny.event.TownRemoveResidentEvent;
 import com.palmergames.bukkit.towny.event.TownRemoveResidentRankEvent;
-import com.palmergames.bukkit.towny.event.resident.ResidentJailEvent;
 import com.palmergames.bukkit.towny.exceptions.AlreadyRegisteredException;
 import com.palmergames.bukkit.towny.exceptions.EmptyTownException;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
@@ -22,15 +20,12 @@ import com.palmergames.bukkit.towny.invites.InviteReceiver;
 import com.palmergames.bukkit.towny.invites.exceptions.TooManyInvitesException;
 import com.palmergames.bukkit.towny.object.economy.Account;
 import com.palmergames.bukkit.towny.object.jail.Jail;
-import com.palmergames.bukkit.towny.object.jail.UnJailReason;
 import com.palmergames.bukkit.towny.object.metadata.CustomDataField;
 import com.palmergames.bukkit.towny.permissions.TownyPerms;
 import com.palmergames.bukkit.towny.tasks.SetDefaultModes;
-import com.palmergames.bukkit.towny.utils.JailUtil;
 import com.palmergames.bukkit.util.BukkitTools;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.util.StringMgmt;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -117,56 +112,6 @@ public class Resident extends TownyObject implements InviteReceiver, EconomyHand
 			TownyUniverse.getInstance().getJailedResidentMap().remove(this);
 			this.setJail(null);
 		}
-	}
-
-	private void sendToJail(int index, Town town) {
-		this.setJailed(true);
-		Bukkit.getPluginManager().callEvent(new ResidentJailEvent(this));
-		TownyMessaging.sendMsg(this, Translation.of("msg_you_have_been_sent_to_jail"));
-		TownyMessaging.sendPrefixedTownMessage(town, Translation.of("msg_player_has_been_sent_to_jail_number", this.getName(), index));
-	}
-
-	public void setJailedByMayor(int index, Town town, Integer hours) {
-
-		if (isJailed()) {
-			JailUtil.unJailResident(this, UnJailReason.PARDONED);
-
-		} else {
-			try {
-				Location loc = town.getJailSpawn(index);
-
-				// Use teleport warmup
-				TownyMessaging.sendMsg(this, Translation.of("msg_town_spawn_warmup", TownySettings.getTeleportWarmupTime()));
-				TownyAPI.getInstance().jailTeleport(getPlayer(), loc);
-
-				sendToJail(index, town);
-				if (hours > 0) {
-					if (hours > 10000)
-						hours = 10000;
-					this.setJailHours(hours);
-					TownyMessaging.sendMsg(this, Translation.of("msg_you've_been_jailed_for_x_days", hours));
-				}
-			} catch (TownyException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void setJailed(Integer index, Town town) {
-		Player player = null;
-		if (BukkitTools.isOnline(this.getName()))
-			player = getPlayer();
-		
-		try {
-			if (player != null) {
-				Location loc = town.getJailSpawn(index);
-				player.teleport(loc);
-				sendToJail(index, town);
-			}
-		} catch (TownyException e) {
-			e.printStackTrace();
-		}
-		this.save();
 	}
 
 	public boolean isJailed() {

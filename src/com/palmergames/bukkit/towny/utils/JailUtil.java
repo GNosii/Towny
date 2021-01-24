@@ -15,6 +15,7 @@ import com.palmergames.bukkit.towny.TownyEconomyHandler;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.TownyUniverse;
+import com.palmergames.bukkit.towny.event.resident.ResidentJailEvent;
 import com.palmergames.bukkit.towny.event.resident.ResidentUnjailEvent;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
@@ -46,12 +47,27 @@ public class JailUtil {
 		
 		switch(reason) {
 		case MAYOR:
+			
 		case OUTLAW_DEATH:
+			hours = reason.getHours();
 		case PRISONER_OF_WAR:
+			hours = reason.getHours();
+			TownyMessaging.sendTitleMessageToResident(resident, "You have been jailed", "Run to the wilderness or wait for a jailbreak.");
+			break;
 		}
 		
 		resident.setJail(jail);
 		resident.setJailed(true);
+		if (hours > 10000)
+			hours = 10000;
+		resident.setJailHours(hours);
+		
+		TownyMessaging.sendMsg(resident, Translation.of("msg_you've_been_jailed_for_x_days", hours)); //TODO: new lang string here.
+		TownyMessaging.sendMsg(resident, Translation.of("msg_you_have_been_sent_to_jail"));
+
+		teleportToJail(resident);
+		Bukkit.getPluginManager().callEvent(new ResidentJailEvent(resident));
+	
 	}
 
 	/**
@@ -175,5 +191,14 @@ public class JailUtil {
 		TownyMessaging.sendMsg(resident, Translation.of("msg_town_spawn_warmup", TownySettings.getTeleportWarmupTime()));
 		TownyAPI.getInstance().jailTeleport(resident.getPlayer(), loc);
 
+	}
+	
+	private static void teleportToJail(Resident resident) {
+		// Send a pardoned player to the world spawn, or their town's spawn if they have a town with a spawn.
+		Location loc = resident.getJail().getJailCellLocations().get(resident.getJailCell());
+
+		// Use teleport warmup
+		TownyMessaging.sendMsg(resident, Translation.of("msg_town_spawn_warmup", TownySettings.getTeleportWarmupTime()));
+		TownyAPI.getInstance().jailTeleport(resident.getPlayer(), loc);
 	}
 }

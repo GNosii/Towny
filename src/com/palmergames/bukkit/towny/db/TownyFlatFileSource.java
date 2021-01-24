@@ -1607,7 +1607,7 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 							continue;
 						}
 				}
-				if (jail.getJailSpawns().size() < 1) {
+				if (jail.getJailCellLocations().size() < 1) {
 					TownyMessaging.sendErrorMsg("Jail " + jail.getUUID() + " loaded with zero spawns " + line + " deleting jail.");
 					deleteJail(jail);
 					return true;
@@ -2119,7 +2119,7 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 		
 		list.add("townblock=" + jail.getTownBlock().getWorldCoord().toString());
 		StringBuilder jailArray = new StringBuilder("spawns=");
-		for (Location spawn : new ArrayList<>(jail.getJailSpawns())) {
+		for (Location spawn : new ArrayList<>(jail.getJailCellLocations())) {
 			jailArray.append(spawn.getWorld().getName()).append(",")
 					.append(spawn.getX()).append(",")
 					.append(spawn.getY()).append(",")
