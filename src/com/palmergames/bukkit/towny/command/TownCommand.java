@@ -3340,10 +3340,10 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 				if (TownyAPI.getInstance().isWarTime())
 					throw new TownyException(Translation.of("msg_war_cannot_do"));
 
-				List<WorldCoord> selection;
+				List<WorldCoord> selection = null;
 				boolean outpost = false;
 				boolean road = false;
-				Town roadOtherTown;
+				Town roadOtherTown = null;
 				boolean isAdmin = permSource.isTownyAdmin(player);
 				Coord key = Coord.parseCoord(plugin.getCache(player).getLastLocation());
 

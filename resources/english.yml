@@ -1384,5 +1384,6 @@ msg_confirmation_road: '%s wants to start development on an road connected to yo
 msg_road_error_offline: 'The mayor of %s is offline, an road system cannot be established if the other party doesn''t accept.'
 msg_road_error_enemy: 'The nation behind %s, %s, considers your nation an enemy, an road system could not be established.'
 msg_road_error_rejected: 'The mayor of %s did not authorize the establishment of an road system.'
+msg_road_error_unknown: 'Unknown town: %s.'
 msg_road_accepted: 'The mayor of %s decided that the road system should begin development as soon as possible!'
 flatfile_err_invalid_treaty: 'Could not load treaty %s on %s.'
