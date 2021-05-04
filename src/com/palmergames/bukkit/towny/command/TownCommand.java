@@ -3370,8 +3370,11 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 				} else if (split.length == 1 && split[0].equalsIgnoreCase("road")){
 					road = true;
 				} else if (split.length == 2 && split[0].equalsIgnoreCase("road")) {
+					road = true;
 					try {
-						
+						roadOtherTown = TownyUniverse.getInstance().getTown(split[1]);
+					} catch (NullPointerException ex) {
+						throw new TownyException(Translation.of("msg_road_error_unknown", split[1]));
 					}
 				} else {
 

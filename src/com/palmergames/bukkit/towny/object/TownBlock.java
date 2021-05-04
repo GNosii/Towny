@@ -72,9 +72,10 @@ public class TownBlock extends TownyObject {
 		return town;
 	}
 	
-	public Town[] getRoadTowns() {
+	public Town[] getRoadTowns() throws NotRegisteredException {
 		if (!hasRoadTowns())
-			throw new NotRegisteredException(String.format("The Road Townblock at (%s, %d, %d) is not registered to any town."))
+			throw new NotRegisteredException(String.format("The Road Townblock at (%s, %d, %d) is not registered to any town."));
+		return roadTowns;
 	}
 
 	public boolean hasTown() {
