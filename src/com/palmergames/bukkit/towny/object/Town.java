@@ -1419,6 +1419,7 @@ public class Town extends Government implements TownBlockOwner {
 	
 	/**
 	 * Adds an town to the road treaty list.
+	 * @param town UUID, you can get it with {@link Town#getUUID()}
 	 */
 	public void addRoadTreaty(UUID townUUID) {
 		roadTreatys.add(TownyUniverse.getInstance().getTown(townUUID));
