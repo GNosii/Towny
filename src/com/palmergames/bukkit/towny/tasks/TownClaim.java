@@ -39,11 +39,13 @@ public class TownClaim extends Thread {
 	private final Player player;
 	private Location outpostLocation;
 	private volatile Town town;
+	private volatile Town otherTown;
 	private final List<WorldCoord> selection;
 	private boolean outpost;
+	private boolean road;
 	private final boolean claim;
 	private final boolean forced;
-
+	
 	/**
 	 * @param plugin reference to towny
 	 * @param player Doing the claiming, or null
@@ -67,6 +69,23 @@ public class TownClaim extends Thread {
 		this.forced = forced;
 		this.setPriority(MIN_PRIORITY);
 	}
+	
+	public TownClaim(Towny plugin, Player player, Town town, List<WorldCoord> selection, boolean isOutpost, boolean claim, boolean forced, boolean isRoad, Town otherTown) {
+
+		super();
+		this.plugin = plugin;
+		this.player = player;
+		if (this.player != null)
+			this.outpostLocation = player.getLocation();
+		this.town = town;
+		this.selection = selection;
+		this.outpost = isOutpost;
+		this.road = isRoad;
+		this.otherTown = otherTown;
+		this.claim = claim;
+		this.forced = forced;
+		this.setPriority(MIN_PRIORITY);
+	}
 
 	@Override
 	public void run() {
@@ -75,6 +94,12 @@ public class TownClaim extends Thread {
 		List<TownyWorld> worlds = new ArrayList<>();
 		List<Town> towns = new ArrayList<>();
 		TownyWorld world = null;
+		if (road) {
+			if (!TownyUniverse.getInstance().hasRoadTreaty(town, otherTown)) {
+				new RoadTreaty(town, otherTown).start();
+			}
+		}
+		
 		if (player != null)
 			TownyMessaging.sendMsg(player, "Processing " + ((claim) ? "Town Claim..." : "Town unclaim..."));
 

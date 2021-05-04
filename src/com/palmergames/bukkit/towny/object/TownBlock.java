@@ -24,12 +24,14 @@ public class TownBlock extends TownyObject {
 
 	private TownyWorld world;
 	private Town town = null;
+	private Town[] roadTowns = null;
 	private Resident resident = null;
 	private TownBlockType type = TownBlockType.RESIDENTIAL;
 	private int x, z;
 	private double plotPrice = -1;
 	private boolean locked = false;
 	private boolean outpost = false;
+	private boolean road = false;
 	private PlotGroup plotGroup;
 	private long claimedAt;
 
@@ -62,16 +64,26 @@ public class TownBlock extends TownyObject {
 		} catch (AlreadyRegisteredException | NullPointerException ignored) {}
 	}
 
+	
 	public Town getTown() throws NotRegisteredException {
 
 		if (!hasTown())
 			throw new NotRegisteredException(String.format("The TownBlock at (%s, %d, %d) is not registered to a town.", world.getName(), x, z));
 		return town;
 	}
+	
+	public Town[] getRoadTowns() {
+		if (!hasRoadTowns())
+			throw new NotRegisteredException(String.format("The Road Townblock at (%s, %d, %d) is not registered to any town."))
+	}
 
 	public boolean hasTown() {
 
 		return town != null;
+	}
+	
+	public boolean hasRoadTowns() {
+		return roadTowns != null;
 	}
 
 	public void setResident(Resident resident) {

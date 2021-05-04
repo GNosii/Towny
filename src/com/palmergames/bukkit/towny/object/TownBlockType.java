@@ -45,7 +45,8 @@ public enum TownBlockType {
 	},
 	BANK(9, "Bank", "B", TownySettings.getPlotSetBankCost()) { // Enables depositing into town and nation banks, if that has been enabled in the config.		
 	}
-
+	ROAD(10, "Road", "R", 0.0) // Experimental road townblocks
+	
 	// These are subject to change, and may not necessarily be added:
 /*
  * PUBLIC(10, "") { // Will have it's own permission set

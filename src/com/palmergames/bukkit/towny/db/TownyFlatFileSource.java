@@ -860,7 +860,18 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 					} catch (Exception e) {
 						town.setDebtBalance(0.0);
 					}
-
+				
+				line = keys.get("roadTreatys");
+				if (line != null)
+					try {
+						String[] treatys = line.split(",");
+						for (String treaty : treatys) {
+							UUID townUUID = UUID.fromString(treaty);
+							town.addRoadTreaty(townUUID);
+						}
+					} catch (Exception e) {
+						TownyMessaging.sendErrorMsg(Translation.of("flatfile_err_invalid_treaty", line, town.getName()));
+					}
 			} catch (Exception e) {
 				TownyMessaging.sendErrorMsg(Translation.of("flatfile_err_reading_town_file_at_line", town.getName(), line, town.getName()));
 				e.printStackTrace();
@@ -1753,6 +1764,13 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 		// Debt balance
 		list.add("debtBalance=" + town.getDebtBalance());
 
+		// Road treatys
+		StringBuilder roadTreatys = new StringBuilder("roadTreatys="); 
+		for (Town treaty : town.getRoadTreatys()) {
+			roadTreatys.append(treaty.getUUID().toString()).append(",");
+		}
+		list.add(roadTreatys.toString());
+		
 		/*
 		 *  Make sure we only save in async
 		 */

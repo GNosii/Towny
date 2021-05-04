@@ -45,6 +45,7 @@ public class Town extends Government implements TownBlockOwner {
 	private List<Location> outpostSpawns = new ArrayList<>();
 	private final List<Location> jailSpawns = new ArrayList<>();
 	private HashMap<String, PlotGroup> plotGroups = null;
+	private final List<Town> roadTreatys = new ArrayList<>();
 	
 	private Resident mayor;
 	private int bonusBlocks = 0;
@@ -1414,5 +1415,24 @@ public class Town extends Government implements TownBlockOwner {
 		residents.clear();
 		residents.addAll(sortedResidents);
 		residentsSorted = true;
+	}
+	
+	/**
+	 * Adds an town to the road treaty list.
+	 */
+	public void addRoadTreaty(UUID townUUID) {
+		roadTreatys.add(TownyUniverse.getInstance().getTown(townUUID));
+	}
+	
+	public void removeRoadTreaty(UUID townUUID) {
+		roadTreatys.remove(TownyUniverse.getInstance().getTown(townUUID));
+	}
+	
+	public boolean hasRoadTreatyWith(Town town) {
+		return roadTreatys.contains(town);
+	}
+	
+	public List<Town> getRoadTreatys() {
+		return roadTreatys;
 	}
 }

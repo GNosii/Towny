@@ -3342,6 +3342,8 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 
 				List<WorldCoord> selection;
 				boolean outpost = false;
+				boolean road = false;
+				Town roadOtherTown;
 				boolean isAdmin = permSource.isTownyAdmin(player);
 				Coord key = Coord.parseCoord(plugin.getCache(player).getLastLocation());
 
@@ -3365,6 +3367,12 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 						outpost = true;
 					} else
 						throw new TownyException(Translation.of("msg_outpost_disable"));
+				} else if (split.length == 1 && split[0].equalsIgnoreCase("road")){
+					road = true;
+				} else if (split.length == 2 && split[0].equalsIgnoreCase("road")) {
+					try {
+						
+					}
 				} else {
 
 					if (!permSource.testPermission(player, PermissionNodes.TOWNY_COMMAND_TOWN_CLAIM_TOWN.getNode()))
@@ -3457,7 +3465,10 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 				/*
 				 * Actually start the claiming process.
 				 */
-				new TownClaim(plugin, player, town, selection, outpost, true, false).start();
+				if (road)
+					new TownClaim(plugin, player, town, selection, outpost, true, false, road, roadOtherTown).start();
+				else 
+					new TownClaim(plugin, player, town, selection, outpost, true, false).start();
 
 			} catch (TownyException x) {
 				TownyMessaging.sendErrorMsg(player, x.getMessage());

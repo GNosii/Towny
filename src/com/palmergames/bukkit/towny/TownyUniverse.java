@@ -1190,4 +1190,8 @@ public class TownyUniverse {
 	public String getLoadDbType() {
 		return TownySettings.getLoadDatabase();
 	}
+	
+	public boolean hasRoadTreaty(Town town1, Town town2) {
+		return town1.hasRoadTreatyWith(town2);
+	}
 }
