@@ -10,7 +10,7 @@ import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 /**
  * Road confirmation and validation thread
  * This should only be used if the towns don't have an road treaty.
- * Use {@link Town#hasRoadTreatyWith(Town)} or {@link TownyUniverse#hasRoadTreaty(Town1, Town2)} for checking.
+ * Use {@link Town#hasRoadTreatyWith(Town)} for checking.
  * @author GNosii
  */
 public class RoadTreaty extends Thread {
