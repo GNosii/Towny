@@ -201,7 +201,8 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 		"outpost",
 		"auto",
 		"circle",
-		"rect"
+		"rect",
+		"road"
 	);
 	
 	public static final List<String> townUnclaimTabCompletes = Arrays.asList(
@@ -301,6 +302,10 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 						case 3:
 							if (!args[1].equalsIgnoreCase("outpost")) {
 								return NameUtil.filterByStart(Collections.singletonList("auto"), args[2]);
+							}
+							
+							if (args[1].equalsIgnoreCase("road")) {
+								return NameUtil.filterByStart(NameUtil.getNames(TownyUniverse.getInstance().getTowns()), args[2]);
 							}
 					}
 					break;
@@ -3368,8 +3373,11 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 					} else
 						throw new TownyException(Translation.of("msg_outpost_disable"));
 				} else if (split.length == 1 && split[0].equalsIgnoreCase("road")){
+					if (!TownyAPI.getInstance().isWilderness(plugin.getCache(player).getLastLocation()))
+						throw new TownyException(Translation.of("msg_already_claimed_1", key));
+					
 					road = true;
-				} else if (split.length == 2 && split[0].equalsIgnoreCase("road")) {
+				} else if (split.length == 1 && split[0].equalsIgnoreCase("road")) {
 					road = true;
 					try {
 						roadOtherTown = TownyUniverse.getInstance().getTown(split[1]);
