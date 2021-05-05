@@ -1419,25 +1419,22 @@ public class Town extends Government implements TownBlockOwner {
 	
 	/**
 	 * Adds an town to the road treaty list.
-	 * @param townUUID  you can get it with {@link Town#getUUID()}
+	 * @param town town object
 	 * @throws AlreadyRegisteredException if the town already has an treaty with this town.
 	 */
-	public void addRoadTreaty(UUID townUUID) throws AlreadyRegisteredException {
-		if (roadTreatys.contains(TownyUniverse.getInstance().getTown(townUUID)))
-			throw new AlreadyRegisteredException("Town with UUID " + townUUID + " already has an treaty with " + this.getName());
+	public void addRoadTreaty(Town town) throws AlreadyRegisteredException {
+		if (roadTreatys.contains(town))
+			throw new AlreadyRegisteredException("Town " + town + " already has an treaty with " + this.getName());
 		
-		roadTreatys.add(TownyUniverse.getInstance().getTown(townUUID));
+		roadTreatys.add(town);
 	}
 	
 	/**
 	 * Removes an town from the road treaty list.
-	 * @param townUUID you can get it with {@link Town#getUUID()}
+	 * @param town town object
 	 * @throws TownyException if {@link TownyUniverse#getTown(UUID)} returned null or if there it isn't an road treaty.
 	 */
-	public void removeRoadTreaty(UUID townUUID) throws TownyException {
-		// attempt at not calling townyuniverse on most lines
-		Town otherTown = TownyUniverse.getInstance().getTown(townUUID);
-		
+	public void removeRoadTreaty(Town otherTown) throws TownyException {
 		// delicious fresh checks
 		if (!roadTreatys.contains(otherTown) || otherTown == null) 
 			throw new TownyException("Town doesn't exist, or there it isn't an road treaty.");
@@ -1458,7 +1455,7 @@ public class Town extends Government implements TownBlockOwner {
 	}
 	
 	public List<Town> getRoadTreatys() {
-		return roadTreatys;
+		return Collections.unmodifiableList(roadTreatys);
 	}
 	
 	/**
