@@ -1419,16 +1419,20 @@ public class Town extends Government implements TownBlockOwner {
 	
 	/**
 	 * Adds an town to the road treaty list.
-	 * @param town UUID, you can get it with {@link Town#getUUID()}
+	 * @param townUUID  you can get it with {@link Town#getUUID()}
+	 * @throws AlreadyRegisteredException if the town already has an treaty with this town.
 	 */
-	public void addRoadTreaty(UUID townUUID) {
+	public void addRoadTreaty(UUID townUUID) throws AlreadyRegisteredException {
+		if (roadTreatys.contains(TownyUniverse.getInstance().getTown(townUUID)))
+			throw new AlreadyRegisteredException("Town with UUID " + townUUID + " already has an treaty with " + this.getName());
+		
 		roadTreatys.add(TownyUniverse.getInstance().getTown(townUUID));
 	}
 	
 	/**
 	 * Removes an town from the road treaty list.
-	 * @param town UUID, you can get it with {@link Town#getUUID()}
-	 * @throws TownyException if {@link TownyUniverse#getTown(UUID))} returned null or if there it isn't an road treaty.
+	 * @param townUUID you can get it with {@link Town#getUUID()}
+	 * @throws TownyException if {@link TownyUniverse#getTown(UUID)} returned null or if there it isn't an road treaty.
 	 */
 	public void removeRoadTreaty(UUID townUUID) throws TownyException {
 		// attempt at not calling townyuniverse on most lines
