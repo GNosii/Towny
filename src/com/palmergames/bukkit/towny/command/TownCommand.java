@@ -1174,8 +1174,9 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 
 	private void parseTownRoadsCommand(Player player, String[] split) throws NotRegisteredException, TownyException {
 		
-		if (split.length > 0) {
-			if (split.length >= 1) {
+		// TODO: check if switching the split.length checks make this work
+		if (split.length > 1) {
+			if (split.length >= 2) {
 				// TODO: Remove Debug Message
 				TownyMessaging.sendMessage(player, split.length + " => " + StringMgmt.join(split, ", "));
 				
