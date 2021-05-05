@@ -1196,7 +1196,7 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 					TownyMessaging.sendDebugMsg("Town roads CUT issued: " + player.getName());
 					
 					if (TownyUniverse.getInstance().hasRoadTreaty(town1, town2))
-						town1.removeRoadTreaty(town2.getUUID());
+						town1.removeRoadTreaty(town2);
 					else
 						throw new TownyException(Translation.of("msg_road_error_no_treaty", town2.getName()));
 				} else {

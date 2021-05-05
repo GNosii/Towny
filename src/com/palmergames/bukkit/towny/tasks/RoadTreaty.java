@@ -5,6 +5,7 @@ import com.palmergames.bukkit.towny.object.Translation;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.confirmations.Confirmation;
+import com.palmergames.bukkit.towny.exceptions.AlreadyRegisteredException;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 
 /**
@@ -28,7 +29,11 @@ public class RoadTreaty extends Thread {
 		if (canStartRoadCreation()) {
 			Confirmation.runOnAccept(() -> {
 				TownyMessaging.sendMsg(town1.getMayor(), Translation.of("msg_road_accepted", town2.getName()));
-			
+				try {
+					town1.addRoadTreaty(town2);
+				} catch (AlreadyRegisteredException e) {
+					TownyMessaging.sendErrorMsg(Translation.of("msg_road_error_already"));
+				}
 			}).runOnCancel(() -> {
 				TownyMessaging.sendMsg(town1.getMayor(), Translation.of("msg_road_error_rejected"));
 				return;
