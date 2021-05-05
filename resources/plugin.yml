@@ -444,6 +444,12 @@ permissions:
             towny.command.town.unclaim: true
             towny.command.town.unclaim.all: true
 
+    towny.command.town.roads.*:
+        description: User can access all town road related commands.
+        default: false
+        children:
+            towny.command.town.roads.add: true 
+            towny.command.town.roads.cut: true
       # Plot command permissions
     towny.command.plot.*:
         description: User can access all town related commands.

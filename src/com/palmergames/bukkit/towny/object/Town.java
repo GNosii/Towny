@@ -1425,8 +1425,28 @@ public class Town extends Government implements TownBlockOwner {
 		roadTreatys.add(TownyUniverse.getInstance().getTown(townUUID));
 	}
 	
-	public void removeRoadTreaty(UUID townUUID) {
-		roadTreatys.remove(TownyUniverse.getInstance().getTown(townUUID));
+	/**
+	 * Removes an town from the road treaty list.
+	 * @param town UUID, you can get it with {@link Town#getUUID()}
+	 * @throws TownyException if {@link TownyUniverse#getTown(UUID))} returned null or if there it isn't an road treaty.
+	 */
+	public void removeRoadTreaty(UUID townUUID) throws TownyException {
+		// attempt at not calling townyuniverse on most lines
+		Town otherTown = TownyUniverse.getInstance().getTown(townUUID);
+		
+		// delicious fresh checks
+		if (!roadTreatys.contains(otherTown) || otherTown == null) 
+			throw new TownyException("Town doesn't exist, or there it isn't an road treaty.");
+		
+		// Send global message 
+		TownyMessaging.sendGlobalMessage(Translation.of("msg_road_cut_global", otherTown.getName(), this.getName()));
+		// Send message to another town
+		TownyMessaging.sendPrefixedTownMessage(otherTown, Translation.of("msg_road_cut_other", this.getName()));
+		// Send message to this town
+		TownyMessaging.sendPrefixedTownMessage(this, Translation.of("msg_road_cut_you", otherTown.getName()));
+	
+		// actually remove
+		roadTreatys.remove(otherTown);
 	}
 	
 	public boolean hasRoadTreatyWith(Town town) {

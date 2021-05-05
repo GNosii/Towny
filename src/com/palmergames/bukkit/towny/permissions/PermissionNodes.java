@@ -171,6 +171,10 @@ public enum PermissionNodes {
 		TOWNY_COMMAND_TOWN_BANKHISTORY("towny.command.town.bankhistory"),
 		TOWNY_COMMAND_TOWN_RESLIST("towny.command.town.reslist"),
 		TOWNY_COMMAND_TOWN_OUTLAWLIST("towny.command.town.outlawlist"),
+		
+		TOWNY_COMMAND_TOWN_ROADS("towny.command.town.roads"),
+		   TOWNY_COMMAND_TOWN_ROADS_ADD("towny.command.town.roads.add"),
+		   TOWNY_COMMAND_TOWN_ROADS_CUT("towny.command.town.roads.cut"),
 	
 	/*
 	 * Plot command permissions

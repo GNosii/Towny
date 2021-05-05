@@ -67,6 +67,7 @@ import com.palmergames.bukkit.towny.regen.TownyRegenAPI;
 import com.palmergames.bukkit.towny.tasks.CooldownTimerTask;
 import com.palmergames.bukkit.towny.tasks.CooldownTimerTask.CooldownType;
 import com.palmergames.bukkit.towny.tasks.TownClaim;
+import com.palmergames.bukkit.towny.tasks.RoadTreaty;
 import com.palmergames.bukkit.towny.utils.AreaSelectionUtil;
 import com.palmergames.bukkit.towny.utils.CombatUtil;
 import com.palmergames.bukkit.towny.utils.MoneyUtil;
@@ -104,6 +105,8 @@ import java.util.stream.Collectors;
  * Send a list of all town help commands to player Command: /town
  */
 
+// TODO: Command syntax for roads should be /town roads
+// TODO: Subcommands for roads: /town roads add [town] - /town roads cut [town]
 public class TownCommand extends BaseCommand implements CommandExecutor {
 
 	private static Towny plugin;
@@ -138,7 +141,8 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 		"buy",
 		"mayor",
 		"bankhistory",
-		"merge"
+		"merge",
+		"roads"
 		);
 	private static final List<String> townSetTabCompletes = Arrays.asList(
 		"board",
@@ -201,8 +205,7 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 		"outpost",
 		"auto",
 		"circle",
-		"rect",
-		"road"
+		"rect"
 	);
 	
 	public static final List<String> townUnclaimTabCompletes = Arrays.asList(
@@ -216,6 +219,11 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 		"received",
 		"accept",
 		"deny"
+	);
+	
+	private static List<String> townRoadsTabCompletes = Arrays.asList(
+		"add",
+		"cut"
 	);
 
 	public TownCommand(Towny instance) {
@@ -750,6 +758,11 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 					}
 
 					parseTownMergeCommand(player, newSplit);
+				} else if (split[0].equalsIgnoreCase("roads")) {
+					if (!permSource.testPermission(player, PermissionNodes.TOWNY_COMMAND_TOWN_ROADS.getNode()))
+						throw new TownyException(Translation.of("msg_err_command_disable"));
+					
+					parseTownRoadsCommand(player, newSplit);
 				} else {
 					/*
 					 * We've gotten this far without a match, check if the argument is a town name.
@@ -1152,6 +1165,39 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 		}
 	}
 
+	private void parseTownRoadsCommand(Player player, String[] split) throws NotRegisteredException, TownyException {
+		
+		if (split.length > 0) {
+			if (split.length == 1) {
+				Town town1 = TownyUniverse.getInstance().getResident(player.getName()).getTown();
+			    Town town2 = TownyUniverse.getInstance().getTown(split[1]);
+			
+			    if (town2 == null)
+					throw new TownyException(Translation.of("msg_err_not_registered_1", split[0]));
+					
+				if (split[0] == "add") {
+					TownyMessaging.sendDebugMsg("Town roads ADD issued: " + player.getName());
+					if (!TownyUniverse.getInstance().hasRoadTreaty(TownyUniverse.getInstance().getResident(player.getName()).getTown(), TownyUniverse.getInstance().getTown(split[1])))
+						new RoadTreaty(town1, town2).start();
+				} else if (split[0] == "cut") {
+					TownyMessaging.sendDebugMsg("Town roads CUT issued: " + player.getName());
+					
+					if (TownyUniverse.getInstance().hasRoadTreaty(town1, town2))
+						town1.removeRoadTreaty(town2.getUUID());
+					else
+						throw new TownyException(Translation.of("msg_road_error_no_treaty", town2.getName()));
+					
+				} else if (split[0] == "list") {
+					TownyMessaging.sendMessage(player, "Road treatys: " + StringMgmt.join(town1.getRoadTreatys(), ", "));
+					return;
+				} else {
+					// TODO: Handling this, currently ignore it
+					return;
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Send a list of all towns in the universe to player Command: /town list
 	 *

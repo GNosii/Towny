@@ -211,6 +211,7 @@ public enum HelpMenu {
 				.add("outlaw add/remove [name]", "")
 				.add("say", "[message]")
 				.add("spawn", Translation.of("town_help_5"))
+				.add("roads", "add/cut")
 				.add(Translation.of("res_sing"), "deposit [$]", "")
 				.add(Translation.of("res_sing"), "rank add/remove [resident] [rank]", "")
 				.add(Translation.of("mayor_sing"), "mayor ?", Translation.of("town_help_8"))
@@ -298,6 +299,16 @@ public enum HelpMenu {
 		}
 	},
 
+	TOWN_ROADS {
+		@Override
+		protected MenuBuilder load() {
+			return new MenuBuilder("town roads")
+					.add("add [town]", "")
+					.add("cut [town]", "")
+					.add("list", "");
+		}
+	},
+	
 	RESIDENT_HELP {
 		@Override
 		protected MenuBuilder load() {
