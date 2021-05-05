@@ -866,8 +866,10 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 					try {
 						String[] treatys = line.split(",");
 						for (String treaty : treatys) {
-							UUID townUUID = UUID.fromString(treaty);
-							town.addRoadTreaty(townUUID);
+							try {
+								UUID townUUID = UUID.fromString(treaty);
+								town.addRoadTreaty(townUUID);
+							} catch (IllegalArgumentException e) {}
 						}
 					} catch (Exception e) {
 						TownyMessaging.sendErrorMsg(Translation.of("flatfile_err_invalid_treaty", line, town.getName()) + " : " + e.getMessage());
@@ -1766,7 +1768,7 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 
 		// Road treatys
 		StringBuilder roadTreatys = new StringBuilder("roadTreatys="); 
-		for (Town treaty : town.getRoadTreatys()) {
+		for (Town treaty : new ArrayList<>(town.getRoadTreatys())) {
 			roadTreatys.append(treaty.getUUID().toString()).append(",");
 		}
 		list.add(roadTreatys.toString());
