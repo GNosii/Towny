@@ -1767,14 +1767,7 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 		list.add("debtBalance=" + town.getDebtBalance());
 
 		// Road treatys
-		StringBuilder roadTreatys = new StringBuilder("roadTreatys="); 
-		for (Town treaty : new ArrayList<>(town.getRoadTreatys())) {
-			// TODO: Remove debug message once stable
-			TownyMessaging.sendDebugMsg("Treatys for " + town.getName() + ": " + town.getRoadTreatys());
-			if (treaty.hasValidUUID()) roadTreatys.append(treaty.getUUID().toString()).append(",");
-			else TownyMessaging.sendErrorMsg("Treaty " + treaty.getName() + " does not have an valid UUID! Cannot save to roadTreatys.");
-		}
-		list.add(roadTreatys.toString());
+		list.add("roadTreatys=" + StringMgmt.join(town.getRoadTreatys(), ","));
 		
 		/*
 		 *  Make sure we only save in async
