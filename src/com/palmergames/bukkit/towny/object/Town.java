@@ -1431,7 +1431,7 @@ public class Town extends Government implements TownBlockOwner {
 	
 	/**
 	 * Removes an town from the road treaty list.
-	 * @param town town object
+	 * @param otherTown town object
 	 * @throws TownyException if {@link TownyUniverse#getTown(UUID)} returned null or if there it isn't an road treaty.
 	 */
 	public void removeRoadTreaty(Town otherTown) throws TownyException {
