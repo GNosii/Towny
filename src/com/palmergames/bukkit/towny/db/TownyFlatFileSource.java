@@ -870,7 +870,7 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 							town.addRoadTreaty(townUUID);
 						}
 					} catch (Exception e) {
-						TownyMessaging.sendErrorMsg(Translation.of("flatfile_err_invalid_treaty", line, town.getName()));
+						TownyMessaging.sendErrorMsg(Translation.of("flatfile_err_invalid_treaty", line, town.getName()) + " : " + e.getMessage());
 					}
 			} catch (Exception e) {
 				TownyMessaging.sendErrorMsg(Translation.of("flatfile_err_reading_town_file_at_line", town.getName(), line, town.getName()));

@@ -1169,6 +1169,9 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 		
 		if (split.length > 0) {
 			if (split.length == 1) {
+				// TODO: Remove Debug Message
+				TownyMessaging.sendMessage(player, split.length + " => " + StringMgmt.join(split, ", "));
+				
 				Town town1 = TownyUniverse.getInstance().getResident(player.getName()).getTown();
 			    Town town2 = TownyUniverse.getInstance().getTown(split[1]);
 			
@@ -1191,8 +1194,8 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 					TownyMessaging.sendMessage(player, "Road treatys: " + StringMgmt.join(town1.getRoadTreatys(), ", "));
 					return;
 				} else {
-					// TODO: Handling this, currently ignore it
-					return;
+					// TODO: Probably change this message for an more user friendly one.
+					throw new TownyException(Translation.of("msg_err_invalid_property", StringMgmt.join(split, ", ")));
 				}
 			}
 		}
