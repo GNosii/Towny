@@ -1770,7 +1770,7 @@ public final class TownyFlatFileSource extends TownyDatabaseHandler {
 		StringBuilder roadTreatys = new StringBuilder("roadTreatys="); 
 		for (Town treaty : new ArrayList<>(town.getRoadTreatys())) {
 			// TODO: Remove debug message once stable
-			TownyMessaging.sendDebugMsg("Treatys for " + town.getName() ": " + town.getRoadTreatys());
+			TownyMessaging.sendDebugMsg("Treatys for " + town.getName() + ": " + town.getRoadTreatys());
 			if (treaty.hasValidUUID()) roadTreatys.append(treaty.getUUID().toString()).append(",");
 			else TownyMessaging.sendErrorMsg("Treaty " + treaty.getName() + " does not have an valid UUID! Cannot save to roadTreatys.");
 		}
