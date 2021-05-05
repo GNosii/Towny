@@ -45,7 +45,7 @@ public class Town extends Government implements TownBlockOwner {
 	private List<Location> outpostSpawns = new ArrayList<>();
 	private final List<Location> jailSpawns = new ArrayList<>();
 	private HashMap<String, PlotGroup> plotGroups = null;
-	private final List<Town> roadTreatys = new ArrayList<>();
+	private List<Town> roadTreatys = new ArrayList<>();
 	
 	private Resident mayor;
 	private int bonusBlocks = 0;
@@ -1459,5 +1459,14 @@ public class Town extends Government implements TownBlockOwner {
 	
 	public List<Town> getRoadTreatys() {
 		return roadTreatys;
+	}
+	
+	/**
+	 * Warning: should only be used by Towny data sources.
+	 * Adds all town objects to the road treatys.
+	 * @param towns what towns to add
+	 */
+	public void setRoadTreatys(List<Town> towns) {
+		this.roadTreatys = towns;
 	}
 }
