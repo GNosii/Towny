@@ -311,10 +311,6 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 							if (!args[1].equalsIgnoreCase("outpost")) {
 								return NameUtil.filterByStart(Collections.singletonList("auto"), args[2]);
 							}
-							
-							if (args[1].equalsIgnoreCase("road")) {
-								return NameUtil.filterByStart(NameUtil.getNames(TownyUniverse.getInstance().getTowns()), args[2]);
-							}
 					}
 					break;
 				case "unclaim":
@@ -408,6 +404,13 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 							return Collections.singletonList("by");
 						case 3:
 							return NameUtil.filterByStart(townListTabCompletes, args[2]);
+					}
+				case "roads":
+					switch (args.length) {
+					    case 2:
+						    return NameUtil.filterByStart(townRoadsTabCompletes, args[1]);
+						case 3:
+							return NameUtil.filterByStart(NameUtil.getNames(TownyUniverse.getInstance().getTowns()), args[2]);
 					}
 				default:
 					if (args.length == 1)
@@ -1087,6 +1090,7 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 		int wilds = 0;
 		int jail = 0;
 		int inn = 0;
+		int road = 0;
 		for (TownBlock townBlock : town.getTownBlocks()) {
 
 			if (townBlock.getType() == TownBlockType.EMBASSY) {
@@ -1117,6 +1121,8 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 					residentOwned++;
 				if (townBlock.isForSale())
 					residentOwnedFS++;
+			} else if (townBlock.getType() == TownBlockType.ROAD) {
+				road++;
 			}
 			if (!townBlock.hasResident()) {
 				townOwned++;
@@ -1130,6 +1136,7 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 		out.add(Colors.Green + "Wilds    : " + Colors.LightGreen + wilds);
 		out.add(Colors.Green + "Jails    : " + Colors.LightGreen + jail);
 		out.add(Colors.Green + "Inns    : " + Colors.LightGreen + inn);
+		out.add(Colors.Green + "Roads    :" + Colors.LightGreen + road);
 		out.add(Colors.Green + "Type: " + Colors.LightGreen + "Player-Owned / ForSale / Total / Daily Revenue");
 		out.add(Colors.Green + "Residential: " + Colors.LightGreen + residentOwned + " / " + residentOwnedFS + " / " + resident + " / " + (residentOwned * town.getPlotTax()));
 		out.add(Colors.Green + "Embassies : " + Colors.LightGreen + embassyRO + " / " + embassyFS + " / " + embassy + " / " + (embassyRO * town.getEmbassyPlotTax()));
@@ -1168,7 +1175,7 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 	private void parseTownRoadsCommand(Player player, String[] split) throws NotRegisteredException, TownyException {
 		
 		if (split.length > 0) {
-			if (split.length == 1) {
+			if (split.length >= 1) {
 				// TODO: Remove Debug Message
 				TownyMessaging.sendMessage(player, split.length + " => " + StringMgmt.join(split, ", "));
 				
@@ -1177,8 +1184,11 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 			
 			    if (town2 == null)
 					throw new TownyException(Translation.of("msg_err_not_registered_1", split[0]));
-					
-				if (split[0] == "add") {
+				
+			    if (split[0] == "list") {
+					TownyMessaging.sendMessage(player, "Road treatys: " + StringMgmt.join(town1.getRoadTreatys(), ", "));
+					return;
+			    } else if (split[0] == "add") {
 					TownyMessaging.sendDebugMsg("Town roads ADD issued: " + player.getName());
 					if (!TownyUniverse.getInstance().hasRoadTreaty(TownyUniverse.getInstance().getResident(player.getName()).getTown(), TownyUniverse.getInstance().getTown(split[1])))
 						new RoadTreaty(town1, town2).start();
@@ -1189,14 +1199,13 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 						town1.removeRoadTreaty(town2.getUUID());
 					else
 						throw new TownyException(Translation.of("msg_road_error_no_treaty", town2.getName()));
-					
-				} else if (split[0] == "list") {
-					TownyMessaging.sendMessage(player, "Road treatys: " + StringMgmt.join(town1.getRoadTreatys(), ", "));
-					return;
 				} else {
 					// TODO: Probably change this message for an more user friendly one.
 					throw new TownyException(Translation.of("msg_err_invalid_property", StringMgmt.join(split, ", ")));
 				}
+			} else {
+				// TODO: Probably change this message for an more user friendly one.
+				throw new TownyException(Translation.of("msg_err_invalid_property", StringMgmt.join(split, ", ")));
 			}
 		}
 	}
