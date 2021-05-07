@@ -1176,9 +1176,12 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 	private void parseTownRoadsCommand(Player player, String[] split) throws NotRegisteredException, TownyException {
 		
 		// COMMANDS WORKING: /town roads 
+		// TAB COMPLETING IS FUNCTIONING CORRECTLY <3
 		// TODO: check if switching the split.length checks make this work
 		// TODO: Localization
 		if (split.length > 0) {
+			// TODO: Remove Debug Message 
+			TownyMessaging.sendMessage(player, Colors.Yellow + "[Length " + split.length + "] => " + StringMgmt.join(split, ", "));
 			
 		    if (split[0] == "list") {
 				TownyMessaging.sendMessage(player, "Currently unsupported!");
@@ -1189,9 +1192,6 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 		    }
 				
 			if (split.length > 1) {
-				// TODO: Remove Debug Message
-				TownyMessaging.sendMessage(player, split.length + " => " + StringMgmt.join(split, ", "));
-				
 				Town town1 = TownyUniverse.getInstance().getResident(player.getName()).getTown();
 			    Town town2 = TownyUniverse.getInstance().getTown(split[1]);
 			
@@ -1199,11 +1199,13 @@ public class TownCommand extends BaseCommand implements CommandExecutor {
 					throw new TownyException(Translation.of("msg_err_not_registered_1", split[0]));
 			    
 			    if (split[0] == "add") {
-					TownyMessaging.sendDebugMsg("Town roads ADD issued: " + player.getName());
+			    	// TODO: Debug message
+					TownyMessaging.sendMessage(player, "Town roads ADD issued: " + player.getName());
 					if (!TownyUniverse.getInstance().hasRoadTreaty(town1, town2))
 						new RoadTreaty(town1, town2).start();
 				} else if (split[0] == "cut") {
-					TownyMessaging.sendDebugMsg("Town roads CUT issued: " + player.getName());
+					// TODO: Debug message
+					TownyMessaging.sendMessage(player, "Town roads CUT issued: " + player.getName());
 					
 					if (TownyUniverse.getInstance().hasRoadTreaty(town1, town2))
 						town1.removeRoadTreaty(town2);
